@@ -2,6 +2,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../hooks/redux';
 import { theme } from '../../theme/theme.constants';
+// Import car images from assets folder
+import carBannerImage from '../../assets/car_img1-removebg-preview.png';
+import carImg1 from '../../assets/car_img1-removebg-preview.png';
+import carImg2 from '../../assets/car_img2-removebg-preview.png';
+import carImg3 from '../../assets/car_img3-removebg-preview.png';
+import carImg4 from '../../assets/car_img4-removebg-preview.png';
+import carImg5 from '../../assets/car_img5-removebg-preview.png';
+import carImg6 from '../../assets/car_img6-removebg-preview.png';
+import carImg7 from '../../assets/car_img7-removebg-preview.png';
 
 /**
  * HomePage Component
@@ -14,12 +23,64 @@ const HomePage = () => {
   const [location, setLocation] = useState('Lombok mataram');
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
 
-  // Mock data for vehicles
+  // Top Brands data with images and names
+  const topBrands = [
+    { id: 1, name: 'Toyota', image: carImg1 },
+    { id: 2, name: 'Honda', image: carImg2 },
+    { id: 3, name: 'BMW', image: carImg3 },
+    { id: 4, name: 'Mercedes', image: carImg4 },
+    { id: 5, name: 'Audi', image: carImg5 },
+    { id: 6, name: 'Hyundai', image: carImg6 },
+    { id: 7, name: 'Ford', image: carImg7 },
+  ];
+
+  // Mock data for vehicles - matching the image design
   const vehicles = [
-    { id: 1, name: 'Vintage Yellow Car', image: '/api/placeholder/200/150' },
-    { id: 2, name: 'Modern Silver Car', image: '/api/placeholder/200/150' },
-    { id: 3, name: 'SUV Vehicle', image: '/api/placeholder/200/150' },
-    { id: 4, name: 'Sports Car', image: '/api/placeholder/200/150' },
+    { 
+      id: 1, 
+      brand: 'Toyota',
+      model: 'Camry',
+      dealership: 'DriveOn Premium',
+      price: 890,
+      image: carImg1,
+      rating: 4.7,
+    },
+    { 
+      id: 2, 
+      brand: 'Honda',
+      model: 'City',
+      dealership: 'DriveOn Premium',
+      price: 620,
+      image: carImg2,
+      rating: 4.8,
+    },
+    { 
+      id: 3, 
+      brand: 'Maruti',
+      model: 'Swift',
+      dealership: 'DriveOn Premium',
+      price: 750,
+      image: carImg3,
+      rating: 4.5,
+    },
+    { 
+      id: 4, 
+      brand: 'Hyundai',
+      model: 'i20',
+      dealership: 'DriveOn Premium',
+      price: 680,
+      image: carImg4,
+      rating: 4.6,
+    },
+    { 
+      id: 5, 
+      brand: 'Tata',
+      model: 'Nexon',
+      dealership: 'DriveOn Premium',
+      price: 920,
+      image: carImg5,
+      rating: 4.9,
+    },
   ];
 
   const handleProfileClick = () => {
@@ -27,12 +88,12 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-20">
-      {/* Status Bar Spacing */}
-      <div className="h-6" style={{ backgroundColor: theme.colors.primary }}></div>
+    <div className="h-screen w-full bg-white overflow-hidden flex flex-col fixed inset-0 max-w-full">
+      {/* Status Bar Spacing - Fixed */}
+      <div className="h-6 shrink-0 fixed top-0 left-0 right-0 z-50" style={{ backgroundColor: theme.colors.primary }}></div>
 
-      {/* Header Section - Purple Background */}
-      <header className="text-white relative overflow-hidden md:rounded-none rounded-b-3xl" style={{ backgroundColor: theme.colors.primary }}>
+      {/* Header Section - Purple Background - Fixed */}
+      <header className="text-white overflow-hidden md:rounded-none rounded-b-3xl shrink-0 max-w-full z-40 fixed left-0 right-0" style={{ backgroundColor: theme.colors.primary, top: '24px', width: '100%' }}>
         {/* Abstract purple pattern background */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -mr-32 -mt-32"></div>
@@ -40,11 +101,11 @@ const HomePage = () => {
         </div>
 
         {/* Header Content */}
-        <div className="relative px-4 py-3 flex items-center justify-between">
+        <div className="relative px-3 py-2 flex items-center justify-between md:px-4 md:py-3">
           {/* Location Section */}
-          <div className="flex items-center gap-2 flex-1">
+          <div className="flex items-center gap-1.5 flex-1 md:gap-2">
             <svg
-              className="w-5 h-5 text-white"
+              className="w-4 h-4 text-white md:w-5 md:h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -63,14 +124,14 @@ const HomePage = () => {
               />
             </svg>
             <div className="flex-1">
-              <div className="text-xs text-white/80">Your location</div>
+              <div className="text-[10px] text-white/80 md:text-xs">Your location</div>
               <button
                 onClick={() => setShowLocationDropdown(!showLocationDropdown)}
-                className="flex items-center gap-1 text-sm font-medium"
+                className="flex items-center gap-0.5 text-xs font-medium md:text-sm md:gap-1"
               >
                 {location}
                 <svg
-                  className="w-4 h-4"
+                  className="w-3 h-3 md:w-4 md:h-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -89,19 +150,19 @@ const HomePage = () => {
           {/* Profile Picture */}
           <button
             onClick={handleProfileClick}
-            className="ml-4 touch-target"
+            className="ml-2 touch-target md:ml-4"
             aria-label="Profile"
           >
             {user?.profilePhoto ? (
               <img
                 src={user.profilePhoto}
                 alt="Profile"
-                className="w-10 h-10 rounded-full border-2 border-white object-cover"
+                className="w-8 h-8 rounded-full border-2 border-white object-cover md:w-10 md:h-10"
               />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border-2 border-white">
+              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center border-2 border-white md:w-10 md:h-10">
                 <svg
-                  className="w-6 h-6 text-white"
+                  className="w-5 h-5 text-white md:w-6 md:h-6"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -117,12 +178,18 @@ const HomePage = () => {
             )}
           </button>
         </div>
-      </header>
+        </header>
 
-      {/* Main Content Area */}
-      <main className="px-4 py-4 space-y-6">
+      {/* Main Content Area - Scrollable with padding for fixed header and bottom navbar */}
+      <main className="flex-1 overflow-y-auto px-4 space-y-6 max-w-full" style={{ 
+        overflowX: 'hidden', 
+        WebkitOverflowScrolling: 'touch',
+        paddingTop: '90px', // Space for status bar (24px) + header (~66px - reduced)
+        paddingBottom: '80px', // Space for bottom navbar (64px) + extra padding
+        marginTop: 0,
+      }}>
         {/* Search Bar */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-3 flex items-center gap-3">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-3 flex items-center gap-3 mt-6">
           <svg
             className="w-5 h-5 text-gray-400"
             fill="none"
@@ -143,77 +210,78 @@ const HomePage = () => {
           />
         </div>
 
-        {/* Top Chart of the Day Banner */}
-        <div className="rounded-xl p-4 relative overflow-hidden" style={{ backgroundColor: theme.colors.primary }}>
+        {/* Featured Car Banner */}
+        <div className="rounded-xl p-3 relative overflow-hidden max-w-full" style={{ backgroundColor: theme.colors.primary }}>
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -mr-16 -mt-16"></div>
+            <div className="absolute top-0 right-0 w-24 h-24 bg-white rounded-full -mr-12 -mt-12"></div>
           </div>
 
-          <div className="relative flex items-center justify-between">
+          <div className="relative flex items-center justify-between gap-3 max-w-full">
             {/* Left Side - Text Content */}
-            <div className="flex-1 pr-4">
-              <div className="text-xs text-white/70 mb-1 uppercase tracking-wide">top chart of the day</div>
-              <h2 className="text-xl font-bold text-white mb-3 leading-tight">Stuff You Should Know</h2>
-              <button className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-semibold transition-colors shadow-md">
+            <div className="flex-1 min-w-0 z-10 max-w-full overflow-hidden">
+              <div className="text-xs text-white/70 mb-0.5 uppercase tracking-wide">Featured Today</div>
+              <h2 className="text-lg font-bold text-white mb-1.5 leading-tight">Rent Your Dream Car</h2>
+              <p className="text-xs text-white/80 mb-2 line-clamp-2">Premium cars available </p>
+              <button 
+                onClick={() => navigate('/cars')}
+                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-colors shadow-md relative z-20"
+              >
                 <svg
-                  className="w-4 h-4"
-                  fill="currentColor"
+                  className="w-3.5 h-3.5"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path d="M8 5v14l11-7z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
                 </svg>
-                Read Now
+                Explore Cars
               </button>
             </div>
 
-            {/* Right Side - SUV Image */}
-            <div className="w-32 h-24 flex-shrink-0 relative">
-              <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 rounded-lg flex items-center justify-center overflow-hidden">
-                {/* Simple car silhouette */}
-                <svg
-                  className="w-24 h-24 text-gray-400"
-                  viewBox="0 0 100 60"
-                  fill="currentColor"
-                >
-                  <rect x="15" y="25" width="70" height="20" rx="2" />
-                  <rect x="20" y="15" width="25" height="15" rx="2" />
-                  <rect x="55" y="15" width="25" height="15" rx="2" />
-                  <circle cx="30" cy="45" r="5" />
-                  <circle cx="70" cy="45" r="5" />
-                </svg>
-              </div>
+            {/* Right Side - Car Image */}
+            <div className="w-40 h-32 shrink-0 absolute right-0 top-1/2 -translate-y-1/2 z-30">
+              <img
+                src={carBannerImage}
+                alt="Premium Car"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
         </div>
 
         {/* Top Brands Section */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
+        <div className="max-w-full overflow-hidden">
+          <div className="flex items-center justify-between mb-1">
             <h3 className="text-lg font-semibold text-gray-900">Top Brands</h3>
-            <button className="text-sm font-medium hover:underline" style={{ color: theme.colors.primary }}>See All</button>
+            <button className="text-sm font-medium hover:underline shrink-0" style={{ color: theme.colors.primary }}>See All</button>
           </div>
-          <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-            {[1, 2, 3, 4].map((brand) => (
+          <div className="flex gap-4 overflow-x-auto -mx-4 pl-4 pr-0 scrollbar-hide max-w-full">
+            {topBrands.slice(0, 7).map((brand) => (
               <div
-                key={brand}
-                className="flex-shrink-0 w-20 h-20 bg-black rounded-lg flex items-center justify-center shadow-sm"
+                key={brand.id}
+                className="shrink-0 flex flex-col items-center"
               >
-                <svg
-                  className="w-12 h-12 text-yellow-400"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5zm0 2.18l8 4v8.82c0 4.54-3.07 8.76-8 9.82-4.93-1.06-8-5.28-8-9.82V8.18l8-4z" />
-                  <path d="M12 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-2.21 0-4-1.79-4-4h2c0 1.1.9 2 2 2s2-.9 2-2h2c0 2.21-1.79 4-4 4z" />
-                </svg>
+                <img
+                  src={brand.image}
+                  alt={brand.name}
+                  className="w-28 h-28 object-contain m-0 p-0"
+                />
+                <span className="text-xs font-medium text-gray-700 text-center max-w-[80px] truncate m-0 p-0">
+                  {brand.name}
+                </span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Identify the Closest Vehicle Card */}
-        <div className="rounded-xl p-4 flex items-center justify-between" style={{ backgroundColor: theme.colors.primary }}>
+        <div className="rounded-xl p-4 flex items-center justify-between max-w-full overflow-hidden" style={{ backgroundColor: theme.colors.primary }}>
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
               <svg
@@ -249,34 +317,96 @@ const HomePage = () => {
         </div>
 
         {/* Available Near You Section */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
+        <div className="w-full overflow-visible">
+          <div className="flex items-center justify-between mb-4 px-0">
             <h3 className="text-lg font-semibold text-gray-900">Available Near You</h3>
-            <button className="text-sm font-medium hover:underline" style={{ color: theme.colors.primary }}>See All</button>
+            <button 
+              onClick={() => navigate('/cars')}
+              className="text-sm font-medium hover:underline shrink-0" 
+              style={{ color: theme.colors.primary }}
+            >
+              See All
+            </button>
           </div>
-          <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+          <div 
+            className="flex gap-2.5 overflow-x-scroll overflow-y-hidden pb-2 -mx-4 px-4 scrollbar-hide" 
+            style={{ 
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              willChange: 'scroll-position',
+              touchAction: 'pan-x pinch-zoom',
+              display: 'flex',
+              flexDirection: 'row',
+            }}
+          >
             {vehicles.map((vehicle) => (
               <div
                 key={vehicle.id}
-                className="flex-shrink-0 w-48 bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+                className="shrink-0 w-56 bg-white rounded-xl shadow-lg border border-gray-200 overflow-visible relative"
+                onClick={() => navigate(`/cars/${vehicle.id}`)}
               >
-                <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
-                  {/* Car silhouette placeholder */}
-                  <svg
-                    className="w-20 h-20 text-gray-400"
-                    viewBox="0 0 100 60"
-                    fill="currentColor"
+                {/* View Button - Top Right */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/cars/${vehicle.id}`);
+                  }}
+                  className="absolute top-2 right-2 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors shadow-md hover:opacity-90"
+                  style={{ 
+                    zIndex: 60,
+                    color: theme.colors.primary,
+                  }}
+                >
+                  View
+                </button>
+
+                {/* Car Image - Elevated with 3D effect - Higher z-index */}
+                <div className="relative -mt-10 mb-2 flex justify-center" style={{ zIndex: 50 }}>
+                  <div 
+                    className="relative"
+                    style={{ 
+                      transform: 'translateZ(0)',
+                      filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.2))',
+                      zIndex: 50,
+                    }}
                   >
-                    <rect x="15" y="25" width="70" height="20" rx="2" />
-                    <rect x="20" y="15" width="25" height="15" rx="2" />
-                    <rect x="55" y="15" width="25" height="15" rx="2" />
-                    <circle cx="30" cy="45" r="5" />
-                    <circle cx="70" cy="45" r="5" />
-                  </svg>
+                    <img
+                      src={vehicle.image}
+                      alt={`${vehicle.brand} ${vehicle.model}`}
+                      className="w-56 h-40 object-contain"
+                      style={{ 
+                        transform: 'perspective(1000px) rotateY(-8deg) rotateX(2deg)',
+                        backfaceVisibility: 'hidden',
+                        zIndex: 50,
+                        position: 'relative',
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="p-3">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-1">{vehicle.name}</h4>
-                  <p className="text-xs text-gray-500">Available now</p>
+
+                {/* Card Content - More Compact */}
+                <div className="px-2.5 pb-2.5 pt-0">
+                  {/* Car Details and Price Row */}
+                  <div className="flex items-start justify-between gap-1.5 mb-1.5">
+                    {/* Left: Car Details */}
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-gray-500 mb-0.5 line-clamp-1">{vehicle.dealership}</p>
+                      <h4 className="text-sm font-semibold text-gray-900 line-clamp-1">
+                        {vehicle.brand} {vehicle.model}
+                      </h4>
+                    </div>
+
+                    {/* Right: Price */}
+                    <div className="flex flex-col items-end shrink-0">
+                      <div className="text-right">
+                        <div className="text-base font-bold" style={{ color: theme.colors.primary }}>
+                          ₹{vehicle.price}
+                        </div>
+                        <p className="text-xs text-gray-500">Per Day</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}

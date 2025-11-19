@@ -14,13 +14,14 @@ const PageLayout = () => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const isProfilePage = location.pathname.startsWith('/profile');
+  const isBookingPage = location.pathname === '/bookings' || location.pathname.startsWith('/booking');
   
   // Routes where header and bottom navbar should be hidden
   const hideNavigationRoutes = ['/login', '/register', '/verify-otp'];
   const shouldHideNavigation = hideNavigationRoutes.includes(location.pathname);
 
-  // Hide default header on homepage and profile pages (they have custom headers)
-  const shouldShowHeader = !isHomePage && !isProfilePage && !shouldHideNavigation;
+  // Hide default header on homepage, profile pages, and booking pages (they have custom headers)
+  const shouldShowHeader = !isHomePage && !isProfilePage && !isBookingPage && !shouldHideNavigation;
 
   return (
     <div className={`min-h-screen flex flex-col ${isProfilePage ? 'bg-white' : 'bg-background-primary'}`}>

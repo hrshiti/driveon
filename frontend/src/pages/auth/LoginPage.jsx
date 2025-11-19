@@ -71,7 +71,7 @@ const LoginPage = () => {
       });
 
       console.log('Login OTP Response:', response);
-      
+
       toastUtils.success('OTP sent successfully!');
       
       // Navigate to OTP verification
@@ -115,7 +115,7 @@ const LoginPage = () => {
     <div 
       className="fixed inset-0 flex items-center justify-center px-4"
       style={{ 
-        backgroundColor: theme.colors.primary,
+        backgroundColor: '#3d096d',
         margin: 0,
         padding: 0,
         position: 'fixed',
@@ -170,7 +170,7 @@ const LoginPage = () => {
               isLoading={isLoading}
               disabled={isLoading}
               className="mt-6"
-              style={{ backgroundColor: theme.colors.primary }}
+              style={{ backgroundColor: '#3d096d' }}
             >
               Send OTP
             </Button>

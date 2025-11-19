@@ -3,7 +3,9 @@ import { useAppSelector, useAppDispatch } from '../../hooks/redux';
 import { logout } from '../../store/slices/authSlice';
 import { clearUser } from '../../store/slices/userSlice';
 import toastUtils from '../../config/toast';
-import { theme } from '../../theme/theme.constants';
+// Theme color constant
+const PRIMARY_COLOR = '#3d096d';
+const PRIMARY_COLOR_LIGHT = '#5d0d8a';
 
 /**
  * ProfileDashboardPage Component
@@ -44,8 +46,8 @@ const ProfileDashboardPage = () => {
         />
       ),
       path: '/profile/complete',
-      badge: !profileComplete ? 'Required' : null,
-      badgeColor: 'bg-red-500',
+      badge: profileComplete ? '100%' : '0%',
+      badgeColor: profileComplete ? 'bg-green-500' : 'bg-red-500',
     },
     {
       id: 'kyc',
@@ -127,7 +129,7 @@ const ProfileDashboardPage = () => {
   return (
     <div className="w-full min-h-screen bg-white pb-20 overflow-x-hidden relative z-0" style={{ backgroundColor: '#ffffff', minHeight: '100vh' }}>
       {/* Header Section - Purple Background */}
-      <header className="w-full text-white relative overflow-hidden" style={{ backgroundColor: theme.colors.primary }}>
+      <header className="w-full text-white relative overflow-hidden" style={{ backgroundColor: PRIMARY_COLOR }}>
         {/* Abstract purple pattern background */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -mr-16 -mt-16"></div>
@@ -185,7 +187,7 @@ const ProfileDashboardPage = () => {
                 </div>
               )}
               {profileComplete && (
-                <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 flex items-center justify-center" style={{ borderColor: theme.colors.primary }}>
+                <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 flex items-center justify-center" style={{ borderColor: PRIMARY_COLOR }}>
                   <svg
                     className="w-2 h-2 text-white"
                     fill="currentColor"
@@ -211,7 +213,7 @@ const ProfileDashboardPage = () => {
       </header>
 
       {/* Main Content */}
-      <main className="px-3 py-3 w-full" style={{ backgroundColor: '#ffffff' }}>
+      <main className="px-3 pt-4 pb-3 w-full" style={{ backgroundColor: '#ffffff' }}>
         {/* Profile Completion Status Card */}
         {!profileComplete && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
@@ -232,9 +234,12 @@ const ProfileDashboardPage = () => {
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="text-xs font-semibold text-yellow-900 mb-0.5">
-                  Complete Your Profile
-                </h3>
+                <div className="flex items-center justify-between gap-2 mb-0.5">
+                  <h3 className="text-xs font-semibold text-yellow-900">
+                    Complete Your Profile
+                  </h3>
+                  <span className="text-xs font-bold text-yellow-900">0%</span>
+                </div>
                 <p className="text-xs text-yellow-700 mb-1.5">
                   Complete your profile to start booking cars
                 </p>
@@ -250,7 +255,7 @@ const ProfileDashboardPage = () => {
         )}
 
         {/* Menu Options */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 pt-2">
           {menuOptions.map((option) => (
             <button
               key={option.id}
@@ -259,10 +264,10 @@ const ProfileDashboardPage = () => {
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 {/* Icon */}
-                <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors flex-shrink-0" style={{ backgroundColor: `${theme.colors.primary}1A`, '--hover-bg': `${theme.colors.primary}33` }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${theme.colors.primary}33`} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${theme.colors.primary}1A`}>
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors flex-shrink-0" style={{ backgroundColor: `${PRIMARY_COLOR}1A` }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${PRIMARY_COLOR}33`} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = `${PRIMARY_COLOR}1A`}>
                   <svg
                     className="w-5 h-5"
-                    style={{ color: theme.colors.primary }}
+                    style={{ color: PRIMARY_COLOR }}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -286,8 +291,7 @@ const ProfileDashboardPage = () => {
                 )}
                 <svg
                   className="w-4 h-4 text-gray-400 transition-colors"
-                  style={{ '--hover-color': theme.colors.primary }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = theme.colors.primary}
+                  onMouseEnter={(e) => e.currentTarget.style.color = PRIMARY_COLOR}
                   onMouseLeave={(e) => e.currentTarget.style.color = '#9ca3af'}
                   fill="none"
                   stroke="currentColor"
@@ -350,7 +354,7 @@ const ProfileDashboardPage = () => {
 
         {/* Referral Code Display */}
         {referralCode && (
-          <div className="mt-3 rounded-lg p-3 text-white" style={{ background: `linear-gradient(to right, ${theme.colors.primary}, ${theme.colors.primaryLight})` }}>
+          <div className="mt-3 rounded-lg p-3 text-white" style={{ background: `linear-gradient(to right, ${PRIMARY_COLOR}, ${PRIMARY_COLOR_LIGHT})` }}>
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0 flex-1">
                 <p className="text-xs text-white/80 mb-0.5">Your Referral Code</p>

@@ -3,6 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../hooks/redux';
 import { BOOKING_STATUS } from '../../constants';
 
+// Import car images from assets
+import carImg1 from '../../assets/car_img1-removebg-preview.png';
+import carImg2 from '../../assets/car_img2-removebg-preview.png';
+import carImg3 from '../../assets/car_img3-removebg-preview.png';
+import carImg4 from '../../assets/car_img4-removebg-preview.png';
+import carImg5 from '../../assets/car_img5-removebg-preview.png';
+import carImg6 from '../../assets/car_img6-removebg-preview.png';
+import carImg7 from '../../assets/car_img7-removebg-preview.png';
+
+// Array of car images for easy access
+const carImages = [carImg1, carImg2, carImg3, carImg4, carImg5, carImg6, carImg7];
+
 /**
  * BookingHistoryPage Component
  * Shows user's booking history with tabs: Active, Completed, Cancelled
@@ -13,6 +25,13 @@ const BookingHistoryPage = () => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
   const [activeTab, setActiveTab] = useState('completed'); // 'active', 'completed', 'cancelled'
 
+  // Get car image from assets based on car ID or index
+  const getCarImage = (carId) => {
+    // Use car ID to get a consistent image (modulo to cycle through available images)
+    const index = parseInt(carId.replace(/\D/g, '')) || 0;
+    return carImages[index % carImages.length];
+  };
+
   // Mock booking data - Replace with actual API call later
   const mockBookings = {
     active: [
@@ -22,7 +41,7 @@ const BookingHistoryPage = () => {
           id: 'car1',
           brand: 'Toyota',
           model: 'Camry',
-          image: '/api/placeholder/200/150',
+          image: getCarImage('car1'),
           rating: 4.7,
         },
         pickupDate: '2024-01-15',
@@ -40,7 +59,7 @@ const BookingHistoryPage = () => {
           id: 'car2',
           brand: 'Honda',
           model: 'City',
-          image: '/api/placeholder/200/150',
+          image: getCarImage('car2'),
           rating: 4.8,
         },
         pickupDate: '2024-01-10',
@@ -57,7 +76,7 @@ const BookingHistoryPage = () => {
           id: 'car3',
           brand: 'Maruti',
           model: 'Swift',
-          image: '/api/placeholder/200/150',
+          image: getCarImage('car3'),
           rating: 4.4,
         },
         pickupDate: '2024-01-05',
@@ -74,7 +93,7 @@ const BookingHistoryPage = () => {
           id: 'car4',
           brand: 'Hyundai',
           model: 'i20',
-          image: '/api/placeholder/200/150',
+          image: getCarImage('car4'),
           rating: 4.3,
         },
         pickupDate: '2024-01-01',
@@ -91,7 +110,7 @@ const BookingHistoryPage = () => {
           id: 'car5',
           brand: 'Tata',
           model: 'Nexon',
-          image: '/api/placeholder/200/150',
+          image: getCarImage('car5'),
           rating: 4.9,
         },
         pickupDate: '2023-12-25',
@@ -110,7 +129,7 @@ const BookingHistoryPage = () => {
           id: 'car6',
           brand: 'Mahindra',
           model: 'XUV700',
-          image: '/api/placeholder/200/150',
+          image: getCarImage('car6'),
           rating: 4.6,
         },
         pickupDate: '2024-01-20',
@@ -146,16 +165,16 @@ const BookingHistoryPage = () => {
   const getActionButtons = (booking) => {
     if (activeTab === 'active') {
       return (
-        <div className="flex gap-2 mt-3">
+        <div className="flex gap-1.5 mt-2">
           <button
             onClick={() => handleViewDetails(booking.id)}
-            className="flex-1 px-4 py-2 bg-white border-2 border-[#3d096d] text-[#3d096d] rounded-lg font-medium text-sm hover:bg-[#3d096d]/10 transition-colors"
+            className="flex-1 px-3 py-1.5 bg-white border-2 border-[#3d096d] text-[#3d096d] rounded-lg font-medium text-xs hover:bg-[#3d096d]/10 transition-colors"
           >
             View Details
           </button>
           <button
             onClick={() => navigate(`/booking/${booking.id}/active`)}
-            className="flex-1 px-4 py-2 bg-[#3d096d] text-white rounded-lg font-medium text-sm hover:bg-[#3d096d]/90 transition-colors"
+            className="flex-1 px-3 py-1.5 bg-[#3d096d] text-white rounded-lg font-medium text-xs hover:bg-[#3d096d]/90 transition-colors"
           >
             Track Trip
           </button>
@@ -163,16 +182,16 @@ const BookingHistoryPage = () => {
       );
     } else if (activeTab === 'completed') {
       return (
-        <div className="flex gap-2 mt-3">
+        <div className="flex gap-1.5 mt-2">
           <button
             onClick={() => handleReBook(booking.car.id)}
-            className="flex-1 px-4 py-2 bg-white border-2 border-[#3d096d] text-[#3d096d] rounded-lg font-medium text-sm hover:bg-[#3d096d]/10 transition-colors"
+            className="flex-1 px-3 py-1.5 bg-white border-2 border-[#3d096d] text-[#3d096d] rounded-lg font-medium text-xs hover:bg-[#3d096d]/10 transition-colors"
           >
             Re-Book
           </button>
           <button
             onClick={() => handleWriteReview(booking.id)}
-            className="flex-1 px-4 py-2 bg-[#3d096d] text-white rounded-lg font-medium text-sm hover:bg-[#3d096d]/90 transition-colors"
+            className="flex-1 px-3 py-1.5 bg-[#3d096d] text-white rounded-lg font-medium text-xs hover:bg-[#3d096d]/90 transition-colors"
           >
             Write Review
           </button>
@@ -180,16 +199,16 @@ const BookingHistoryPage = () => {
       );
     } else if (activeTab === 'cancelled') {
       return (
-        <div className="flex gap-2 mt-3">
+        <div className="flex gap-1.5 mt-2">
           <button
             onClick={() => handleReBook(booking.car.id)}
-            className="flex-1 px-4 py-2 bg-white border-2 border-[#3d096d] text-[#3d096d] rounded-lg font-medium text-sm hover:bg-[#3d096d]/10 transition-colors"
+            className="flex-1 px-3 py-1.5 bg-white border-2 border-[#3d096d] text-[#3d096d] rounded-lg font-medium text-xs hover:bg-[#3d096d]/10 transition-colors"
           >
             Book Again
           </button>
           <button
             onClick={() => handleViewDetails(booking.id)}
-            className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium text-sm hover:bg-gray-200 transition-colors"
+            className="flex-1 px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg font-medium text-xs hover:bg-gray-200 transition-colors"
           >
             View Details
           </button>
@@ -208,24 +227,24 @@ const BookingHistoryPage = () => {
         </div>
 
         <div className="relative px-4 py-3">
-          {/* Back Button */}
-          <button
-            onClick={() => navigate(-1)}
-            className="mb-2 p-1.5 -ml-1 touch-target"
-            aria-label="Go back"
-          >
-            <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-
-          {/* Title */}
-          <h1 className="text-lg font-bold text-white mb-4">My Bookings</h1>
+          {/* Back Button and Title in same row */}
+          <div className="flex items-center gap-3 mb-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-1.5 -ml-1 touch-target"
+              aria-label="Go back"
+            >
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+            <h1 className="text-lg font-bold text-white">My Bookings</h1>
+          </div>
 
           {/* Tabs */}
           <div className="flex gap-4 border-b border-white/20">
@@ -277,25 +296,38 @@ const BookingHistoryPage = () => {
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {currentBookings.map((booking) => (
+          <div className="space-y-3">
+            {currentBookings.map((booking, index) => (
               <div
                 key={booking.id}
-                className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm"
+                className={`bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm relative ${index === 0 ? 'mt-2' : ''}`}
               >
-                <div className="flex gap-3 p-3">
-                  {/* Car Image */}
-                  <div className="flex-shrink-0">
-                    <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden flex items-center justify-center">
-                      {booking.car.image ? (
-                        <img
-                          src={booking.car.image}
-                          alt={`${booking.car.brand} ${booking.car.model}`}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
+                {/* Rating - Top Right */}
+                <div className="absolute top-2 right-2 flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-1.5 py-0.5 shadow-sm z-10">
+                  <svg
+                    className="w-3.5 h-3.5 text-yellow-400 fill-current"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                  </svg>
+                  <span className="text-xs font-medium text-gray-900">
+                    {booking.car.rating}
+                  </span>
+                </div>
+
+                <div className="flex gap-2.5 p-2.5">
+                  {/* Car Image and Price - Direct image, no container */}
+                  <div className="flex-shrink-0 flex flex-col">
+                    {booking.car.image ? (
+                      <img
+                        src={booking.car.image}
+                        alt={`${booking.car.brand} ${booking.car.model}`}
+                        className="w-16 h-16 object-cover rounded-lg mb-1.5"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mb-1.5">
                         <svg
-                          className="w-12 h-12 text-gray-400"
+                          className="w-10 h-10 text-gray-400"
                           viewBox="0 0 100 60"
                           fill="currentColor"
                         >
@@ -305,35 +337,28 @@ const BookingHistoryPage = () => {
                           <circle cx="30" cy="45" r="5" />
                           <circle cx="70" cy="45" r="5" />
                         </svg>
-                      )}
+                      </div>
+                    )}
+                    {/* Price below image */}
+                    <div className="text-center">
+                      <span className="text-sm font-semibold text-gray-900">
+                        ₹{booking.totalPrice.toLocaleString('en-IN')}
+                      </span>
                     </div>
                   </div>
 
-                  {/* Booking Details */}
-                  <div className="flex-1 min-w-0">
+                  {/* Booking Details - Compact */}
+                  <div className="flex-1 min-w-0 flex flex-col">
                     {/* Car Name */}
-                    <h3 className="text-base font-semibold text-gray-900 mb-1">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-0.5 line-clamp-1 pr-12">
                       {booking.car.brand} {booking.car.model}
                     </h3>
 
-                    {/* Rating */}
-                    <div className="flex items-center gap-1 mb-2">
-                      <svg
-                        className="w-4 h-4 text-yellow-400 fill-current"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                      </svg>
-                      <span className="text-sm font-medium text-gray-900">
-                        {booking.car.rating}
-                      </span>
-                    </div>
-
-                    {/* Duration and Details */}
-                    <div className="flex items-center gap-3 mb-2">
+                    {/* Duration and Date - Compact */}
+                    <div className="flex items-center gap-2 mb-1.5">
                       <div className="flex items-center gap-1">
                         <svg
-                          className="w-4 h-4 text-gray-500"
+                          className="w-3.5 h-3.5 text-gray-500"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -349,7 +374,7 @@ const BookingHistoryPage = () => {
                       </div>
                       <div className="flex items-center gap-1">
                         <svg
-                          className="w-4 h-4 text-gray-500"
+                          className="w-3.5 h-3.5 text-gray-500"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -370,10 +395,10 @@ const BookingHistoryPage = () => {
                       </div>
                     </div>
 
-                    {/* Location */}
-                    <div className="flex items-start gap-1 mb-2">
+                    {/* Location - Compact */}
+                    <div className="flex items-start gap-1 mb-1.5 flex-1">
                       <svg
-                        className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0"
+                        className="w-3.5 h-3.5 text-gray-500 mt-0.5 flex-shrink-0"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -391,25 +416,20 @@ const BookingHistoryPage = () => {
                           d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                         />
                       </svg>
-                      <p className="text-xs text-gray-600 line-clamp-1">
+                      <p className="text-xs text-gray-600 line-clamp-1 flex-1">
                         {booking.pickupLocation}
                       </p>
                     </div>
 
-                    {/* Price */}
-                    <div className="mb-2">
-                      <span className="text-sm font-semibold text-gray-900">
-                        ₹{booking.totalPrice.toLocaleString('en-IN')}
-                      </span>
+                    {/* Action Buttons - Moved to where price was */}
+                    <div className="mt-auto">
+                      {getActionButtons(booking)}
                     </div>
-
-                    {/* Action Buttons */}
-                    {getActionButtons(booking)}
                   </div>
                 </div>
               </div>
             ))}
-      </div>
+          </div>
         )}
       </main>
     </div>
