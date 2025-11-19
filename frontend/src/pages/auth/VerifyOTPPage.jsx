@@ -6,7 +6,8 @@ import { useAppDispatch } from '../../hooks/redux';
 import { loginSuccess } from '../../store/slices/authSlice';
 import { authService } from '../../services';
 import toastUtils from '../../config/toast';
-import { theme } from '../../theme/theme.constants';
+// Theme color constant
+const PRIMARY_COLOR = '#3d096d';
 
 /**
  * VerifyOTPPage Component
@@ -151,7 +152,7 @@ const VerifyOTPPage = () => {
     <div 
       className="fixed inset-0 flex items-center justify-center px-4"
       style={{ 
-        backgroundColor: theme.colors.primary,
+        backgroundColor: '#3d096d',
         margin: 0,
         padding: 0,
         position: 'fixed',
@@ -203,10 +204,10 @@ const VerifyOTPPage = () => {
                   <input
                     {...props}
                     className="w-11 h-12 md:w-14 md:h-16 text-center text-xl md:text-2xl font-bold border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 bg-white text-gray-900 transition-all hover:shadow-md"
-                    style={{ '--focus-border': theme.colors.primary, '--focus-ring': `${theme.colors.primary}33` }}
+                    style={{ '--focus-border': '#3d096d', '--focus-ring': '#3d096d33' }}
                     onFocus={(e) => {
-                      e.currentTarget.style.borderColor = theme.colors.primary;
-                      e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.colors.primary}33`;
+                      e.currentTarget.style.borderColor = '#3d096d';
+                      e.currentTarget.style.boxShadow = '0 0 0 2px #3d096d33';
                     }}
                     onBlur={(e) => {
                       e.currentTarget.style.borderColor = '#d1d5db';
@@ -229,7 +230,7 @@ const VerifyOTPPage = () => {
             {timer > 0 ? (
               <p className="text-sm text-gray-600">
                 Resend code in{' '}
-                <span className="font-semibold" style={{ color: theme.colors.primary }}>
+                <span className="font-semibold" style={{ color: '#3d096d' }}>
                   {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
                 </span>
               </p>
@@ -237,7 +238,7 @@ const VerifyOTPPage = () => {
               <button
                 onClick={handleResendOTP}
                 className="text-sm font-medium hover:underline"
-                style={{ color: theme.colors.primary }}
+                style={{ color: '#3d096d' }}
                 disabled={isLoading}
               >
                 Resend OTP
@@ -254,7 +255,7 @@ const VerifyOTPPage = () => {
             onClick={handleVerifyOTP}
             isLoading={isLoading}
             disabled={isLoading || otp.length !== 6}
-            style={{ backgroundColor: theme.colors.primary }}
+            style={{ backgroundColor: '#3d096d' }}
           >
             Verify OTP
           </Button>
@@ -264,7 +265,7 @@ const VerifyOTPPage = () => {
             <button
               onClick={() => navigate(type === 'login' ? '/login' : '/register')}
               className="text-sm hover:underline transition-colors"
-              style={{ color: theme.colors.primary }}
+              style={{ color: '#3d096d' }}
             >
               Change {type === 'login' ? 'email/phone' : 'email/phone number'}
             </button>

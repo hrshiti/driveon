@@ -1,4 +1,5 @@
 import { forwardRef } from 'react';
+import { theme } from '../../theme/theme.constants';
 
 /**
  * Button Component

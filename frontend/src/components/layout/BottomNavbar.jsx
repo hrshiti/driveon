@@ -95,16 +95,18 @@ const BottomNavbar = () => {
 
   return (
     <nav 
-      className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white border-t border-gray-200 z-50 shadow-lg"
+      className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white border-t border-gray-200 z-50 shadow-lg safe-area-inset-bottom"
       style={{
         position: 'fixed',
         bottom: 0,
         left: 0,
         right: 0,
-        width: '100%'
+        width: '100%',
+        maxWidth: '100vw',
+        overflow: 'visible',
       }}
     >
-      <div className="flex items-center justify-around h-16 px-2">
+      <div className="flex items-center justify-around h-16 px-2 max-w-full" style={{ overflow: 'visible', paddingTop: '8px' }}>
         {navItems.map((item, index) => {
           // Special handling for Add button (center button)
           if (item.type === 'add') {
@@ -112,7 +114,8 @@ const BottomNavbar = () => {
               <button
                 key="add"
                 onClick={handleClick.bind(null, item)}
-                className="flex flex-col items-center justify-center -mt-6 touch-target"
+                className="flex flex-col items-center justify-center touch-target"
+                style={{ marginTop: '-24px' }}
                 aria-label={item.label}
               >
                 <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg" style={{ backgroundColor: theme.colors.primary }}>
@@ -143,7 +146,7 @@ const BottomNavbar = () => {
               to={item.path}
               onClick={(e) => handleClick(item, e)}
               className={`
-                flex flex-col items-center justify-center gap-1 px-2 py-1 rounded-lg transition-colors touch-target
+                flex flex-col items-center justify-center gap-1 px-1 py-1 rounded-lg transition-colors touch-target shrink-0 min-w-0
                 ${disabled ? 'opacity-50' : ''}
               `}
               aria-label={item.label}
