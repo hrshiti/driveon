@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Suspense } from 'react';
 import Header from './Header';
 import Footer from './Footer';
@@ -10,13 +10,20 @@ import BottomNavbar from './BottomNavbar';
  * Includes Header, Footer, BottomNavbar (mobile), and loading states
  */
 const PageLayout = () => {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+  
+  // Routes where header and bottom navbar should be hidden
+  const hideNavigationRoutes = ['/login', '/register', '/verify-otp'];
+  const shouldHideNavigation = hideNavigationRoutes.includes(location.pathname);
+
   return (
     <div className="min-h-screen bg-background-primary flex flex-col">
-      {/* Header - Mobile and Desktop */}
-      <Header />
+      {/* Header - Mobile and Desktop (hidden on homepage and auth pages) */}
+      {!isHomePage && !shouldHideNavigation && <Header />}
 
       {/* Main Content */}
-      <main className="flex-1 pb-16 md:pb-0">
+      <main className={`flex-1 ${shouldHideNavigation ? '' : isHomePage ? '' : 'pb-16 md:pb-0'}`}>
         {/* Loading fallback for lazy-loaded routes */}
         <Suspense
           fallback={
@@ -32,11 +39,11 @@ const PageLayout = () => {
         </Suspense>
       </main>
 
-      {/* Footer - Desktop Only */}
-      <Footer />
+      {/* Footer - Desktop Only (hidden on auth pages) */}
+      {!isHomePage && !shouldHideNavigation && <Footer />}
 
-      {/* Bottom Navbar - Mobile Only */}
-      <BottomNavbar />
+      {/* Bottom Navbar - Mobile Only (hidden on auth pages) */}
+      {!shouldHideNavigation && <BottomNavbar />}
     </div>
   );
 };

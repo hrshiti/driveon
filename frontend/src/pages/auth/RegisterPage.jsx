@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,7 +8,7 @@ import { authService } from '../../services';
 import toastUtils from '../../config/toast';
 
 /**
- * Register Schema Validation
+ * Register Schema Validation - OTP Based
  */
 const registerSchema = z.object({
   email: z
@@ -30,12 +30,23 @@ const registerSchema = z.object({
 
 /**
  * RegisterPage Component
- * Mobile-first registration page with theme colors
- * Fully responsive design
+ * OTP-based registration with purple theme matching homepage
+ * Fixed view, no scrolling
  */
 const RegisterPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
+  // Prevent body scroll when component mounts
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, []);
 
   const {
     register,
@@ -55,26 +66,49 @@ const RegisterPage = () => {
     setIsLoading(true);
 
     try {
-      // Call register API
+      // Send OTP for registration
       const response = await authService.register({
         email: data.email,
         phone: data.phone,
         referralCode: data.referralCode || undefined,
       });
 
-      toastUtils.success('Registration successful! Please verify OTP.');
+      console.log('Register Response:', response);
       
-      // Navigate to OTP verification with email/phone
+      toastUtils.success('OTP sent successfully! Please verify.');
+      
+      // Navigate to OTP verification
       navigate('/verify-otp', {
         state: {
           email: data.email,
           phone: data.phone,
+          type: 'register',
         },
         replace: true,
       });
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+      console.error('Register Error:', error);
+      console.error('Error Response:', error.response);
+      console.error('Error Data:', error.response?.data);
+      
+      // Extract error message from various possible formats
+      const errorMessage = 
+        error.response?.data?.message || 
+        error.response?.data?.error || 
+        error.message || 
+        'Registration failed. Please try again.';
+      
       toastUtils.error(errorMessage);
+      
+      // Always navigate to OTP page (mock mode or if API fails)
+      navigate('/verify-otp', {
+        state: {
+          email: data.email,
+          phone: data.phone,
+          type: 'register',
+        },
+        replace: true,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -82,10 +116,30 @@ const RegisterPage = () => {
 
   return (
     <div 
-      className="h-screen w-screen flex items-center justify-center px-4 overflow-hidden m-0 p-0" 
-      style={{ backgroundColor: '#3d096d', margin: 0, padding: 0 }}
+      className="fixed inset-0 flex items-center justify-center px-4"
+      style={{ 
+        backgroundColor: '#3d096d',
+        margin: 0,
+        padding: 0,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
+        maxWidth: '100%',
+        maxHeight: '100%'
+      }}
     >
-      <div className="w-full max-w-md">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -mr-32 -mt-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full -ml-24 -mb-24"></div>
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
@@ -97,7 +151,7 @@ const RegisterPage = () => {
         </div>
 
         {/* Register Card */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 md:p-8 shadow-2xl" style={{ boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(61, 9, 109, 0.05)' }}>
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-2xl">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Email Input */}
             <Input
@@ -180,46 +234,11 @@ const RegisterPage = () => {
               isLoading={isLoading}
               disabled={isLoading}
               className="mt-6"
+              style={{ backgroundColor: '#3d096d' }}
             >
-              Create Account
+              Send OTP
             </Button>
           </form>
-
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border-default"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">
-                Or sign up with
-              </span>
-            </div>
-          </div>
-
-          {/* Social Register Buttons (Optional - for future) */}
-          <div className="grid grid-cols-2 gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              size="md"
-              fullWidth
-              disabled
-              className="text-sm"
-            >
-              Google
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="md"
-              fullWidth
-              disabled
-              className="text-sm"
-            >
-              Facebook
-            </Button>
-          </div>
         </div>
 
         {/* Sign In Link */}

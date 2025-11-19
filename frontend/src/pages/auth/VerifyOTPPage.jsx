@@ -9,8 +9,8 @@ import toastUtils from '../../config/toast';
 
 /**
  * VerifyOTPPage Component
- * Mobile-first OTP verification page with theme colors
- * Fully responsive design
+ * OTP verification with purple theme matching homepage
+ * Fixed view, no scrolling
  */
 const VerifyOTPPage = () => {
   const navigate = useNavigate();
@@ -22,8 +22,19 @@ const VerifyOTPPage = () => {
   const [timer, setTimer] = useState(60); // 60 seconds timer
   const [canResend, setCanResend] = useState(false);
 
-  // Get email/phone from location state
-  const { email, phone } = location.state || {};
+  // Get email/phone and type from location state
+  const { email, phone, emailOrPhone, type = 'register', from = '/' } = location.state || {};
+
+  // Prevent body scroll when component mounts
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, []);
 
   // Timer countdown
   useEffect(() => {
@@ -60,8 +71,8 @@ const VerifyOTPPage = () => {
     try {
       // Call verify OTP API
       const response = await authService.verifyOTP({
-        email: email || undefined,
-        phone: phone || undefined,
+        email: email || (emailOrPhone?.includes('@') ? emailOrPhone : undefined),
+        phone: phone || (!emailOrPhone?.includes('@') ? emailOrPhone?.replace(/\D/g, '') : undefined),
         otp: otp,
       });
 
@@ -76,10 +87,14 @@ const VerifyOTPPage = () => {
 
       toastUtils.success('OTP verified successfully!');
       
-      // Redirect to home or intended page
-      navigate('/', { replace: true });
+      // Redirect to intended page or home
+      navigate(from, { replace: true });
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Invalid OTP. Please try again.';
+      console.error('Verify OTP Error:', error);
+      const errorMessage = 
+        error.response?.data?.message || 
+        error.message || 
+        'Invalid OTP. Please try again.';
       toastUtils.error(errorMessage);
       setOtp(''); // Clear OTP on error
     } finally {
@@ -90,11 +105,18 @@ const VerifyOTPPage = () => {
   const handleResendOTP = async () => {
     if (!canResend) return;
 
+    setIsLoading(true);
     try {
-      await authService.register({
-        email: email || undefined,
-        phone: phone || undefined,
-      });
+      if (type === 'login') {
+        await authService.sendLoginOTP({
+          emailOrPhone: emailOrPhone,
+        });
+      } else {
+        await authService.register({
+          email: email || undefined,
+          phone: phone || undefined,
+        });
+      }
 
       toastUtils.success('OTP resent successfully!');
       setTimer(60);
@@ -103,21 +125,53 @@ const VerifyOTPPage = () => {
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to resend OTP. Please try again.';
       toastUtils.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  // Get display text for email/phone
+  const getDisplayText = () => {
+    if (emailOrPhone) {
+      return emailOrPhone.includes('@') ? emailOrPhone : `+91 ${emailOrPhone}`;
+    }
+    if (email) return email;
+    if (phone) return `+91 ${phone}`;
+    return '';
+  };
+
   // Redirect if no email/phone
-  if (!email && !phone) {
-    navigate('/register', { replace: true });
+  if (!email && !phone && !emailOrPhone) {
+    navigate(type === 'login' ? '/login' : '/register', { replace: true });
     return null;
   }
 
   return (
     <div 
-      className="h-screen w-screen flex items-center justify-center px-4 overflow-hidden m-0 p-0" 
-      style={{ backgroundColor: '#3d096d', margin: 0, padding: 0 }}
+      className="fixed inset-0 flex items-center justify-center px-4"
+      style={{ 
+        backgroundColor: '#3d096d',
+        margin: 0,
+        padding: 0,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
+        maxWidth: '100%',
+        maxHeight: '100%'
+      }}
     >
-      <div className="w-full max-w-md">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -mr-32 -mt-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full -ml-24 -mb-24"></div>
+      </div>
+
+      <div className="w-full max-w-md relative z-10">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
@@ -127,12 +181,12 @@ const VerifyOTPPage = () => {
             We've sent a 6-digit code to
           </p>
           <p className="text-white font-medium">
-            {email || `+91 ${phone}`}
+            {getDisplayText()}
           </p>
         </div>
 
         {/* OTP Card */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 md:p-8 shadow-2xl" style={{ boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(61, 9, 109, 0.05)' }}>
+        <div className="bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-2xl">
           {/* OTP Input */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-4 text-center">
@@ -190,18 +244,19 @@ const VerifyOTPPage = () => {
             onClick={handleVerifyOTP}
             isLoading={isLoading}
             disabled={isLoading || otp.length !== 6}
+            style={{ backgroundColor: '#3d096d' }}
           >
             Verify OTP
           </Button>
 
-          {/* Back to Register */}
+          {/* Back to Register/Login */}
           <div className="mt-6 text-center">
             <button
-              onClick={() => navigate('/register')}
+              onClick={() => navigate(type === 'login' ? '/login' : '/register')}
               className="text-sm hover:underline transition-colors"
               style={{ color: '#3d096d' }}
             >
-              Change email/phone number
+              Change {type === 'login' ? 'email/phone' : 'email/phone number'}
             </button>
           </div>
         </div>
@@ -213,8 +268,8 @@ const VerifyOTPPage = () => {
             <button
               onClick={handleResendOTP}
               disabled={!canResend}
-              className="hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
-              style={{ color: '#3d096d' }}
+              className="hover:underline disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              style={{ color: '#ffffff' }}
             >
               resend
             </button>
