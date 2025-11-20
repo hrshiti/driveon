@@ -138,29 +138,29 @@ const ProfileDashboardPage = () => {
 
         {/* Header Content */}
         <div className="relative px-4 py-3">
-          {/* Back Button */}
-          <button
-            onClick={() => navigate(-1)}
-            className="mb-2 p-1.5 -ml-1 touch-target"
-            aria-label="Go back"
-          >
-            <svg
-              className="w-5 h-5 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </button>
-
-          {/* User Info */}
+          {/* Back Button, Profile Icon, and User Name - All Aligned */}
           <div className="flex items-center gap-3">
+            {/* Back Button */}
+            <button
+              onClick={() => navigate(-1)}
+              className="p-1.5 -ml-1 touch-target flex-shrink-0"
+              aria-label="Go back"
+            >
+              <svg
+                className="w-5 h-5 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+            </button>
+
             {/* Profile Photo */}
             <div className="relative">
               {userPhoto ? (

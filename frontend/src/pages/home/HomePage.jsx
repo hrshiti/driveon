@@ -88,7 +88,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="h-screen w-full bg-white overflow-hidden flex flex-col fixed inset-0 max-w-full">
+    <div className="min-h-screen w-full bg-white">
       {/* Status Bar Spacing - Fixed */}
       <div className="h-6 shrink-0 fixed top-0 left-0 right-0 z-50" style={{ backgroundColor: theme.colors.primary }}></div>
 
@@ -181,12 +181,9 @@ const HomePage = () => {
         </header>
 
       {/* Main Content Area - Scrollable with padding for fixed header and bottom navbar */}
-      <main className="flex-1 overflow-y-auto px-4 space-y-6 max-w-full" style={{ 
-        overflowX: 'hidden', 
-        WebkitOverflowScrolling: 'touch',
-        paddingTop: '90px', // Space for status bar (24px) + header (~66px - reduced)
-        paddingBottom: '80px', // Space for bottom navbar (64px) + extra padding
-        marginTop: 0,
+      <main className="px-4 space-y-6 max-w-full" style={{ 
+        paddingTop: '90px', // Space for status bar (24px) + header (~66px)
+        paddingBottom: '90px', // Space for bottom navbar
       }}>
         {/* Search Bar */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-3 flex items-center gap-3 mt-6">
@@ -259,7 +256,13 @@ const HomePage = () => {
         <div className="max-w-full overflow-hidden">
           <div className="flex items-center justify-between mb-1">
             <h3 className="text-lg font-semibold text-gray-900">Top Brands</h3>
-            <button className="text-sm font-medium hover:underline shrink-0" style={{ color: theme.colors.primary }}>See All</button>
+            <button 
+              onClick={() => navigate('/cars')}
+              className="text-sm font-medium hover:underline shrink-0" 
+              style={{ color: theme.colors.primary }}
+            >
+              See All
+            </button>
           </div>
           <div className="flex gap-4 overflow-x-auto -mx-4 pl-4 pr-0 scrollbar-hide max-w-full">
             {topBrands.slice(0, 7).map((brand) => (
@@ -343,7 +346,7 @@ const HomePage = () => {
             {vehicles.map((vehicle) => (
               <div
                 key={vehicle.id}
-                className="shrink-0 w-56 bg-white rounded-xl shadow-lg border border-gray-200 overflow-visible relative"
+                className="shrink-0 w-56 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden relative"
                 onClick={() => navigate(`/cars/${vehicle.id}`)}
               >
                 {/* View Button - Top Right */}
@@ -352,34 +355,36 @@ const HomePage = () => {
                     e.stopPropagation();
                     navigate(`/cars/${vehicle.id}`);
                   }}
-                  className="absolute top-2 right-2 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors shadow-md hover:opacity-90"
+                  className="absolute top-2 right-2 px-2.5 py-1 rounded-lg text-xs font-medium transition-colors shadow-md hover:opacity-90 bg-white"
                   style={{ 
-                    zIndex: 60,
+                    zIndex: 100,
                     color: theme.colors.primary,
                   }}
                 >
                   View
                 </button>
 
-                {/* Car Image - Elevated with 3D effect - Higher z-index */}
-                <div className="relative -mt-10 mb-2 flex justify-center" style={{ zIndex: 50 }}>
+                {/* Car Image - Elevated with 3D effect */}
+                <div className="relative -mt-8 mb-2 flex justify-center items-center overflow-hidden" style={{ zIndex: 10, height: '140px', width: '100%' }}>
                   <div 
-                    className="relative"
+                    className="relative flex items-center justify-center"
                     style={{ 
                       transform: 'translateZ(0)',
                       filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.2))',
-                      zIndex: 50,
+                      width: '180px',
+                      height: '140px',
                     }}
                   >
                     <img
                       src={vehicle.image}
                       alt={`${vehicle.brand} ${vehicle.model}`}
-                      className="w-56 h-40 object-contain"
+                      className="object-contain"
                       style={{ 
                         transform: 'perspective(1000px) rotateY(-8deg) rotateX(2deg)',
                         backfaceVisibility: 'hidden',
-                        zIndex: 50,
-                        position: 'relative',
+                        width: '180px',
+                        height: '140px',
+                        objectFit: 'contain',
                       }}
                     />
                   </div>

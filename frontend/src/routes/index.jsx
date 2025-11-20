@@ -13,6 +13,8 @@ const RegisterPage = lazy(() => import('../pages/auth/RegisterPage'));
 const VerifyOTPPage = lazy(() => import('../pages/auth/VerifyOTPPage'));
 const CarListingPage = lazy(() => import('../pages/cars/CarListingPage'));
 const CarDetailsPage = lazy(() => import('../pages/cars/CarDetailsPage'));
+const CarReviewsPage = lazy(() => import('../pages/cars/CarReviewsPage'));
+const BookingFormPage = lazy(() => import('../pages/booking/BookingFormPage'));
 const BookingDateTimePage = lazy(() => import('../pages/booking/BookingDateTimePage'));
 const BookingPaymentOptionPage = lazy(() => import('../pages/booking/BookingPaymentOptionPage'));
 const BookingGuarantorPage = lazy(() => import('../pages/booking/BookingGuarantorPage'));
@@ -20,6 +22,7 @@ const BookingPaymentPage = lazy(() => import('../pages/booking/BookingPaymentPag
 const BookingConfirmationPage = lazy(() => import('../pages/booking/BookingConfirmationPage'));
 const ActiveBookingPage = lazy(() => import('../pages/booking/ActiveBookingPage'));
 const BookingHistoryPage = lazy(() => import('../pages/booking/BookingHistoryPage'));
+const ReviewFormPage = lazy(() => import('../pages/booking/ReviewFormPage'));
 const ProfileDashboardPage = lazy(() => import('../pages/profile/ProfileDashboardPage'));
 const ProfileCompletePage = lazy(() => import('../pages/profile/ProfileCompletePage'));
 const KYCStatusPage = lazy(() => import('../pages/profile/KYCStatusPage'));
@@ -69,6 +72,18 @@ export const router = createBrowserRouter([
       {
         path: 'cars/:id',
         element: <CarDetailsPage />,
+      },
+      {
+        path: 'cars/:id/reviews',
+        element: <CarReviewsPage />,
+      },
+      {
+        path: 'booking/:carId',
+        element: <BookingFormPage />,
+      },
+      {
+        path: 'booking/:carId/payment',
+        element: <BookingPaymentPage />,
       },
 
       // Protected Routes (require authentication)
@@ -126,14 +141,14 @@ export const router = createBrowserRouter([
                 element: <BookingGuarantorPage />,
               },
               {
-                path: 'booking/:carId/payment',
-                element: <BookingPaymentPage />,
-              },
-              {
                 path: 'booking/:id/confirm',
                 element: <BookingConfirmationPage />,
               },
             ],
+          },
+          {
+            path: 'booking/:bookingId/review',
+            element: <ReviewFormPage />,
           },
 
           // Admin Routes (require admin role)

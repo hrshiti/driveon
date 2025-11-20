@@ -37,16 +37,6 @@ const BottomNavbar = () => {
       ),
     },
     {
-      type: 'add',
-      label: 'Add',
-      onClick: () => {
-        // Handle add action - could navigate to add car or booking
-        if (isAuthenticated) {
-          // Navigate to appropriate add page
-        }
-      },
-    },
-    {
       path: '/bookings',
       label: 'Bookings',
       icon: (
@@ -106,37 +96,8 @@ const BottomNavbar = () => {
         overflow: 'visible',
       }}
     >
-      <div className="flex items-center justify-around h-16 px-2 max-w-full" style={{ overflow: 'visible', paddingTop: '8px' }}>
+      <div className="flex items-center justify-around min-h-20 px-2 py-2 max-w-full" style={{ overflow: 'visible' }}>
         {navItems.map((item, index) => {
-          // Special handling for Add button (center button)
-          if (item.type === 'add') {
-            return (
-              <button
-                key="add"
-                onClick={handleClick.bind(null, item)}
-                className="flex flex-col items-center justify-center touch-target"
-                style={{ marginTop: '-24px' }}
-                aria-label={item.label}
-              >
-                <div className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg" style={{ backgroundColor: theme.colors.primary }}>
-                  <svg
-                    className="w-7 h-7 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2.5}
-                      d="M12 4v16m8-8H4"
-                    />
-                  </svg>
-                </div>
-              </button>
-            );
-          }
-
           const active = isActive(item.path);
           const disabled = item.requiresAuth && !isAuthenticated;
 
@@ -145,21 +106,31 @@ const BottomNavbar = () => {
               key={item.path}
               to={item.path}
               onClick={(e) => handleClick(item, e)}
-              className={`
-                flex flex-col items-center justify-center gap-1 px-1 py-1 rounded-lg transition-colors touch-target shrink-0 min-w-0
-                ${disabled ? 'opacity-50' : ''}
-              `}
+              className={`flex flex-col items-center justify-center gap-1 touch-target shrink-0 min-w-0 ${disabled ? 'opacity-50' : ''}`}
               aria-label={item.label}
             >
-              <svg
-                className="w-6 h-6"
-                style={{ color: active ? theme.colors.primary : '#6b7280' }}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                {item.icon}
-              </svg>
+              {active ? (
+                <div className="w-12 h-12 rounded-full flex items-center justify-center shadow-md" style={{ backgroundColor: theme.colors.primary }}>
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    {item.icon}
+                  </svg>
+                </div>
+              ) : (
+                <svg
+                  className="w-6 h-6"
+                  style={{ color: '#6b7280' }}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  {item.icon}
+                </svg>
+              )}
               <span className="text-xs font-medium" style={{ color: active ? theme.colors.primary : '#6b7280' }}>
                 {item.label}
               </span>
