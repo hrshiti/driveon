@@ -33,7 +33,6 @@ const PageLayout = () => {
     "/login",
     "/register",
     "/verify-otp",
-    "/admin/login",
   ];
   const shouldHideNavigation = hideNavigationRoutes.includes(location.pathname);
 

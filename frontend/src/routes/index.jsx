@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy } from "react";
 import ProtectedRoute from "../components/layout/ProtectedRoute";
-import AdminRoute from "../components/layout/AdminRoute";
 import OwnerRoute from "../components/layout/OwnerRoute";
 import ProfileCompleteRoute from "../components/layout/ProfileCompleteRoute";
 import PageLayout from "../components/layout/PageLayout";
@@ -51,18 +50,9 @@ const ReferralDashboardPage = lazy(() =>
   import("../pages/profile/ReferralDashboardPage")
 );
 const SettingsPage = lazy(() => import("../pages/profile/SettingsPage"));
-const AdminLoginPage = lazy(() => import("../pages/admin/AdminLoginPage"));
 const AdminDashboardPage = lazy(() =>
   import("../pages/admin/AdminDashboardPage")
 );
-const AdminUsersPage = lazy(() => import("../pages/admin/AdminUsersPage"));
-const AdminKYCPage = lazy(() => import("../pages/admin/AdminKYCPage"));
-const AdminCarsPage = lazy(() => import("../pages/admin/AdminCarsPage"));
-const AdminBookingsPage = lazy(() =>
-  import("../pages/admin/AdminBookingsPage")
-);
-const AdminPricingPage = lazy(() => import("../pages/admin/AdminPricingPage"));
-const AdminReportsPage = lazy(() => import("../pages/admin/AdminReportsPage"));
 const OwnerDashboardPage = lazy(() =>
   import("../pages/owner/OwnerDashboardPage")
 );
@@ -74,7 +64,7 @@ const OwnerBookingsPage = lazy(() =>
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 
 // Create router configuration
-export const router = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path: "/",
     element: <PageLayout />,
@@ -97,8 +87,8 @@ export const router = createBrowserRouter([
         element: <VerifyOTPPage />,
       },
       {
-        path: "admin/login",
-        element: <AdminLoginPage />,
+        path: "admin/dashboard",
+        element: <AdminDashboardPage />,
       },
       {
         path: "cars",
@@ -186,41 +176,6 @@ export const router = createBrowserRouter([
             element: <ReviewFormPage />,
           },
 
-          // Admin Routes (require admin role)
-          {
-            element: <AdminRoute />,
-            children: [
-              {
-                path: "admin",
-                element: <AdminDashboardPage />,
-              },
-              {
-                path: "admin/users",
-                element: <AdminUsersPage />,
-              },
-              {
-                path: "admin/kyc",
-                element: <AdminKYCPage />,
-              },
-              {
-                path: "admin/cars",
-                element: <AdminCarsPage />,
-              },
-              {
-                path: "admin/bookings",
-                element: <AdminBookingsPage />,
-              },
-              {
-                path: "admin/pricing",
-                element: <AdminPricingPage />,
-              },
-              {
-                path: "admin/reports",
-                element: <AdminReportsPage />,
-              },
-            ],
-          },
-
           // Owner Routes (require owner role)
           {
             element: <OwnerRoute />,
@@ -254,3 +209,5 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
+
+export default router;

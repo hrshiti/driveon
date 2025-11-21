@@ -5,7 +5,6 @@
 
 export { default as api } from "./api";
 export { default as authService } from "./auth.service";
-export { adminAuthService } from "./adminAuth.service";
 export { default as userService } from "./user.service";
 export { default as carService } from "./car.service";
 export { default as bookingService } from "./booking.service";

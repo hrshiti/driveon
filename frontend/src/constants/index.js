@@ -48,7 +48,6 @@ export const API_ENDPOINTS = {
 // User Roles
 export const USER_ROLES = {
   USER: 'user',
-  ADMIN: 'admin',
   OWNER: 'owner',
   GUARANTOR: 'guarantor',
 };
