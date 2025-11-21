@@ -1,0 +1,875 @@
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { theme } from '../../../theme/theme.constants';
+import Card from '../../../components/common/Card';
+
+/**
+ * Referral Management Page
+ * Admin can view, filter, and manage all referral activities
+ * No localStorage or Redux - All state managed via React hooks
+ */
+const ReferralManagementPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get initial view from URL
+  const getInitialView = () => {
+    if (location.pathname.includes('/statistics')) return 'statistics';
+    if (location.pathname.includes('/top-referrers')) return 'top-referrers';
+    return 'list';
+  };
+
+  // State management
+  const [referrals, setReferrals] = useState([]);
+  const [filteredReferrals, setFilteredReferrals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedReferral, setSelectedReferral] = useState(null);
+  const [showReferralDetail, setShowReferralDetail] = useState(false);
+  const [viewMode, setViewMode] = useState(getInitialView()); // list, statistics, top-referrers
+  
+  // Filter states
+  const [filters, setFilters] = useState({
+    status: 'all', // all, pending, completed
+    dateRange: 'all', // all, today, week, month
+    referrer: 'all',
+  });
+
+  // Mock referrals data
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      const mockReferrals = [
+        {
+          id: '1',
+          referrerId: '1',
+          referrerName: 'John Doe',
+          referrerEmail: 'john.doe@example.com',
+          referralCode: 'JOHN2024',
+          referredUserId: '2',
+          referredUserName: 'Jane Smith',
+          referredUserEmail: 'jane.smith@example.com',
+          pointsEarned: 100,
+          status: 'completed',
+          referralDate: '2024-03-10T10:00:00',
+          completedDate: '2024-03-15T14:00:00',
+          redemptionHistory: [
+            { date: '2024-03-20', points: 50, description: 'Redeemed for discount' },
+          ],
+        },
+        {
+          id: '2',
+          referrerId: '1',
+          referrerName: 'John Doe',
+          referrerEmail: 'john.doe@example.com',
+          referralCode: 'JOHN2024',
+          referredUserId: '5',
+          referredUserName: 'David Brown',
+          referredUserEmail: 'david.b@example.com',
+          pointsEarned: 100,
+          status: 'pending',
+          referralDate: '2024-03-16T11:00:00',
+          redemptionHistory: [],
+        },
+        {
+          id: '3',
+          referrerId: '5',
+          referrerName: 'David Brown',
+          referrerEmail: 'david.b@example.com',
+          referralCode: 'DAVID2024',
+          referredUserId: '6',
+          referredUserName: 'Emily Davis',
+          referredUserEmail: 'emily.d@example.com',
+          pointsEarned: 100,
+          status: 'completed',
+          referralDate: '2024-03-12T09:00:00',
+          completedDate: '2024-03-18T16:00:00',
+          redemptionHistory: [],
+        },
+        {
+          id: '4',
+          referrerId: '7',
+          referrerName: 'Robert Wilson',
+          referrerEmail: 'robert.w@example.com',
+          referralCode: 'ROBERT2024',
+          referredUserId: '8',
+          referredUserName: 'Lisa Anderson',
+          referredUserEmail: 'lisa.a@example.com',
+          pointsEarned: 100,
+          status: 'completed',
+          referralDate: '2024-03-08T08:00:00',
+          completedDate: '2024-03-14T12:00:00',
+          redemptionHistory: [
+            { date: '2024-03-22', points: 100, description: 'Redeemed for free ride' },
+          ],
+        },
+        {
+          id: '5',
+          referrerId: '2',
+          referrerName: 'Jane Smith',
+          referrerEmail: 'jane.smith@example.com',
+          referralCode: 'JANE2024',
+          referredUserId: '4',
+          referredUserName: 'Sarah Williams',
+          referredUserEmail: 'sarah.w@example.com',
+          pointsEarned: 100,
+          status: 'pending',
+          referralDate: '2024-03-17T15:00:00',
+          redemptionHistory: [],
+        },
+        {
+          id: '6',
+          referrerId: '1',
+          referrerName: 'John Doe',
+          referrerEmail: 'john.doe@example.com',
+          referralCode: 'JOHN2024',
+          referredUserId: '6',
+          referredUserName: 'Emily Davis',
+          referredUserEmail: 'emily.d@example.com',
+          pointsEarned: 100,
+          status: 'completed',
+          referralDate: '2024-03-05T10:00:00',
+          completedDate: '2024-03-11T09:00:00',
+          redemptionHistory: [],
+        },
+        {
+          id: '7',
+          referrerId: '8',
+          referrerName: 'Lisa Anderson',
+          referrerEmail: 'lisa.a@example.com',
+          referralCode: 'LISA2024',
+          referredUserId: '3',
+          referredUserName: 'Mike Johnson',
+          referredUserEmail: 'mike.j@example.com',
+          pointsEarned: 100,
+          status: 'completed',
+          referralDate: '2024-03-01T12:00:00',
+          completedDate: '2024-03-07T10:00:00',
+          redemptionHistory: [
+            { date: '2024-03-15', points: 50, description: 'Redeemed for discount' },
+            { date: '2024-03-25', points: 50, description: 'Redeemed for discount' },
+          ],
+        },
+        {
+          id: '8',
+          referrerId: '6',
+          referrerName: 'Emily Davis',
+          referrerEmail: 'emily.d@example.com',
+          referralCode: 'EMILY2024',
+          referredUserId: '7',
+          referredUserName: 'Robert Wilson',
+          referredUserEmail: 'robert.w@example.com',
+          pointsEarned: 100,
+          status: 'completed',
+          referralDate: '2024-02-28T14:00:00',
+          completedDate: '2024-03-06T11:00:00',
+          redemptionHistory: [],
+        },
+      ];
+      setReferrals(mockReferrals);
+      setFilteredReferrals(mockReferrals);
+      setLoading(false);
+    }, 500);
+  }, []);
+
+  // Filter and search referrals
+  useEffect(() => {
+    let filtered = [...referrals];
+
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(
+        (referral) =>
+          referral.referrerName.toLowerCase().includes(query) ||
+          referral.referrerEmail.toLowerCase().includes(query) ||
+          referral.referredUserName.toLowerCase().includes(query) ||
+          referral.referredUserEmail.toLowerCase().includes(query) ||
+          referral.referralCode.toLowerCase().includes(query)
+      );
+    }
+
+    // Status filter
+    if (filters.status !== 'all') {
+      filtered = filtered.filter((referral) => referral.status === filters.status);
+    }
+
+    // Date range filter
+    if (filters.dateRange !== 'all') {
+      const now = new Date();
+      filtered = filtered.filter((referral) => {
+        const referralDate = new Date(referral.referralDate);
+        switch (filters.dateRange) {
+          case 'today':
+            return referralDate.toDateString() === now.toDateString();
+          case 'week':
+            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            return referralDate >= weekAgo;
+          case 'month':
+            const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            return referralDate >= monthAgo;
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Referrer filter
+    if (filters.referrer !== 'all') {
+      filtered = filtered.filter((referral) => referral.referrerId === filters.referrer);
+    }
+
+    setFilteredReferrals(filtered);
+  }, [referrals, searchQuery, filters]);
+
+  // Calculate statistics
+  const statistics = {
+    totalReferrals: referrals.length,
+    completedReferrals: referrals.filter((r) => r.status === 'completed').length,
+    pendingReferrals: referrals.filter((r) => r.status === 'pending').length,
+    totalPointsEarned: referrals.reduce((sum, r) => sum + r.pointsEarned, 0),
+    totalPointsRedeemed: referrals.reduce(
+      (sum, r) => sum + r.redemptionHistory.reduce((redSum, red) => redSum + red.points, 0),
+      0
+    ),
+    activeReferrers: new Set(referrals.map((r) => r.referrerId)).size,
+  };
+
+  // Calculate top referrers
+  const topReferrers = Array.from(
+    referrals.reduce((acc, referral) => {
+      const referrerId = referral.referrerId;
+      if (!acc.has(referrerId)) {
+        acc.set(referrerId, {
+          referrerId,
+          referrerName: referral.referrerName,
+          referrerEmail: referral.referrerEmail,
+          referralCode: referral.referralCode,
+          totalReferrals: 0,
+          completedReferrals: 0,
+          totalPointsEarned: 0,
+          totalPointsRedeemed: 0,
+        });
+      }
+      const referrer = acc.get(referrerId);
+      referrer.totalReferrals++;
+      if (referral.status === 'completed') {
+        referrer.completedReferrals++;
+        referrer.totalPointsEarned += referral.pointsEarned;
+      }
+      referrer.totalPointsRedeemed += referral.redemptionHistory.reduce(
+        (sum, red) => sum + red.points,
+        0
+      );
+      return acc;
+    }, new Map())
+  )
+    .map(([_, data]) => data)
+    .sort((a, b) => b.totalReferrals - a.totalReferrals)
+    .slice(0, 10);
+
+  const handleViewReferral = (referral) => {
+    setSelectedReferral(referral);
+    setShowReferralDetail(true);
+  };
+
+  const handleAdjustPoints = (referralId, points) => {
+    // In real app, this would make an API call
+    setReferrals((prevList) =>
+      prevList.map((referral) => {
+        if (referral.id === referralId) {
+          return { ...referral, pointsEarned: referral.pointsEarned + points };
+        }
+        return referral;
+      })
+    );
+  };
+
+  const handleExport = () => {
+    // In real app, this would generate and download CSV/Excel
+    console.log('Exporting referrals data...');
+  };
+
+  // Get status badge color
+  const getStatusColor = (status) => {
+    const colors = {
+      completed: 'bg-green-100 text-green-800',
+      pending: 'bg-yellow-100 text-yellow-800',
+    };
+    return colors[status] || 'bg-gray-100 text-gray-800';
+  };
+
+  // Get unique referrers
+  const referrers = Array.from(
+    new Set(
+      referrals.map((referral) => ({
+        id: referral.referrerId,
+        name: referral.referrerName,
+      }))
+    )
+  );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div
+            className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 mx-auto mb-4"
+            style={{ borderColor: theme.colors.primary }}
+          ></div>
+          <p className="text-gray-600">Loading referrals...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-6 md:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-6 md:mb-8">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2" style={{ color: theme.colors.primary }}>
+                Referral Management
+              </h1>
+              <p className="text-sm md:text-base text-gray-600">Manage referral activities and points</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleExport}
+                className="px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-all"
+                style={{ backgroundColor: theme.colors.primary }}
+              >
+                Export Reports
+              </button>
+              {/* View Mode Toggle */}
+              <div className="flex border border-gray-300 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`px-4 py-2 text-sm font-medium transition-colors ${
+                    viewMode === 'list'
+                      ? 'text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                  style={viewMode === 'list' ? { backgroundColor: theme.colors.primary } : {}}
+                >
+                  List
+                </button>
+                <button
+                  onClick={() => setViewMode('statistics')}
+                  className={`px-4 py-2 text-sm font-medium transition-colors ${
+                    viewMode === 'statistics'
+                      ? 'text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                  style={viewMode === 'statistics' ? { backgroundColor: theme.colors.primary } : {}}
+                >
+                  Statistics
+                </button>
+                <button
+                  onClick={() => setViewMode('top-referrers')}
+                  className={`px-4 py-2 text-sm font-medium transition-colors ${
+                    viewMode === 'top-referrers'
+                      ? 'text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                  style={viewMode === 'top-referrers' ? { backgroundColor: theme.colors.primary } : {}}
+                >
+                  Top Referrers
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          <Card className="p-4 text-center">
+            <div className="text-2xl md:text-3xl font-bold mb-1" style={{ color: theme.colors.primary }}>
+              {statistics.totalReferrals}
+            </div>
+            <div className="text-xs md:text-sm text-gray-600">Total Referrals</div>
+          </Card>
+          <Card className="p-4 text-center">
+            <div className="text-2xl md:text-3xl font-bold mb-1 text-green-600">{statistics.completedReferrals}</div>
+            <div className="text-xs md:text-sm text-gray-600">Completed</div>
+          </Card>
+          <Card className="p-4 text-center">
+            <div className="text-2xl md:text-3xl font-bold mb-1 text-yellow-600">{statistics.pendingReferrals}</div>
+            <div className="text-xs md:text-sm text-gray-600">Pending</div>
+          </Card>
+          <Card className="p-4 text-center">
+            <div className="text-xl md:text-2xl font-bold mb-1" style={{ color: theme.colors.primary }}>
+              {statistics.totalPointsEarned}
+            </div>
+            <div className="text-xs md:text-sm text-gray-600">Points Earned</div>
+          </Card>
+          <Card className="p-4 text-center">
+            <div className="text-xl md:text-2xl font-bold mb-1 text-purple-600">{statistics.totalPointsRedeemed}</div>
+            <div className="text-xs md:text-sm text-gray-600">Points Redeemed</div>
+          </Card>
+        </div>
+
+        {/* Referrals List View */}
+        {viewMode === 'list' && (
+          <>
+            {/* Search and Filters */}
+            <Card className="p-4 md:p-6 mb-6">
+              {/* Search Bar */}
+              <div className="mb-4">
+                <div className="relative">
+                  <svg
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="Search by referrer name, email, referral code, or referred user..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              {/* Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Status Filter */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
+                  <select
+                    value={filters.status}
+                    onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                  >
+                    <option value="all">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+
+                {/* Date Range Filter */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Date Range</label>
+                  <select
+                    value={filters.dateRange}
+                    onChange={(e) => setFilters({ ...filters, dateRange: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                  >
+                    <option value="all">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="week">This Week</option>
+                    <option value="month">This Month</option>
+                  </select>
+                </div>
+
+                {/* Referrer Filter */}
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Referrer</label>
+                  <select
+                    value={filters.referrer}
+                    onChange={(e) => setFilters({ ...filters, referrer: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                  >
+                    <option value="all">All Referrers</option>
+                    {referrers.map((referrer) => (
+                      <option key={referrer.id} value={referrer.id}>
+                        {referrer.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </Card>
+
+            {/* Referrals List */}
+            <div className="mb-4">
+              <p className="text-sm text-gray-600">
+                Showing <span className="font-semibold">{filteredReferrals.length}</span> of <span className="font-semibold">{referrals.length}</span> referrals
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {filteredReferrals.map((referral) => (
+                <Card key={referral.id} className="p-4 hover:shadow-lg transition-all">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    {/* Referral Info */}
+                    <div className="flex-1">
+                      <div className="flex items-start justify-between mb-3">
+                        <div>
+                          <h3 className="font-semibold text-gray-900 mb-1">
+                            {referral.referrerName} → {referral.referredUserName}
+                          </h3>
+                          <p className="text-sm text-gray-500 mb-2">
+                            Code: <span className="font-mono font-semibold">{referral.referralCode}</span>
+                          </p>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(referral.status)}`}>
+                          {referral.status.charAt(0).toUpperCase() + referral.status.slice(1)}
+                        </span>
+                      </div>
+
+                      {/* Referral Details Grid */}
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
+                        <div>
+                          <p className="text-xs text-gray-600">Referrer</p>
+                          <p className="text-sm font-semibold text-gray-900">{referral.referrerName}</p>
+                          <p className="text-xs text-gray-500">{referral.referrerEmail}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-600">Referred User</p>
+                          <p className="text-sm font-semibold text-gray-900">{referral.referredUserName}</p>
+                          <p className="text-xs text-gray-500">{referral.referredUserEmail}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-600">Points Earned</p>
+                          <p className="text-sm font-semibold" style={{ color: theme.colors.primary }}>
+                            {referral.pointsEarned}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-600">Referral Date</p>
+                          <p className="text-sm text-gray-900">{new Date(referral.referralDate).toLocaleDateString()}</p>
+                          {referral.completedDate && (
+                            <p className="text-xs text-gray-500">Completed: {new Date(referral.completedDate).toLocaleDateString()}</p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Redemption History */}
+                      {referral.redemptionHistory.length > 0 && (
+                        <div className="mt-3 p-3 bg-purple-50 rounded-lg">
+                          <p className="text-xs font-medium text-purple-800 mb-2">Redemption History:</p>
+                          <div className="space-y-1">
+                            {referral.redemptionHistory.map((redemption, index) => (
+                              <p key={index} className="text-xs text-purple-700">
+                                {new Date(redemption.date).toLocaleDateString()} - {redemption.points} points - {redemption.description}
+                              </p>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex flex-col gap-2 md:w-48">
+                      <button
+                        onClick={() => handleViewReferral(referral)}
+                        className="w-full px-4 py-2 text-sm font-medium text-white rounded-lg hover:opacity-90 transition-colors"
+                        style={{ backgroundColor: theme.colors.primary }}
+                      >
+                        View Details
+                      </button>
+                      <button
+                        onClick={() => {
+                          const points = prompt('Enter points to add (negative to subtract):');
+                          if (points) handleAdjustPoints(referral.id, parseInt(points));
+                        }}
+                        className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                      >
+                        Adjust Points
+                      </button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            {filteredReferrals.length === 0 && (
+              <Card className="p-8 text-center">
+                <p className="text-gray-600">No referrals found matching your filters.</p>
+              </Card>
+            )}
+          </>
+        )}
+
+        {/* Statistics View */}
+        {viewMode === 'statistics' && (
+          <div className="space-y-6">
+            {/* Overview Statistics */}
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Referral Statistics Overview</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">Total Referrals</p>
+                  <p className="text-2xl font-bold" style={{ color: theme.colors.primary }}>
+                    {statistics.totalReferrals}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">Completion Rate</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {statistics.totalReferrals > 0
+                      ? ((statistics.completedReferrals / statistics.totalReferrals) * 100).toFixed(1)
+                      : 0}%
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">Active Referrers</p>
+                  <p className="text-2xl font-bold" style={{ color: theme.colors.primary }}>
+                    {statistics.activeReferrers}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">Avg Referrals/User</p>
+                  <p className="text-2xl font-bold" style={{ color: theme.colors.primary }}>
+                    {statistics.activeReferrers > 0
+                      ? (statistics.totalReferrals / statistics.activeReferrers).toFixed(1)
+                      : 0}
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            {/* Points Statistics */}
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Points Statistics</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">Total Points Earned</p>
+                  <p className="text-2xl font-bold" style={{ color: theme.colors.primary }}>
+                    {statistics.totalPointsEarned}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">Total Points Redeemed</p>
+                  <p className="text-2xl font-bold text-purple-600">{statistics.totalPointsRedeemed}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-600 mb-1">Available Points</p>
+                  <p className="text-2xl font-bold text-green-600">
+                    {statistics.totalPointsEarned - statistics.totalPointsRedeemed}
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            {/* Chart Placeholder */}
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Referral Trends</h2>
+              <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                <p className="text-gray-500">Chart visualization will appear here</p>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* Top Referrers View */}
+        {viewMode === 'top-referrers' && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-gray-900">Top Referrers</h2>
+            {topReferrers.map((referrer, index) => (
+              <Card key={referrer.referrerId} className="p-4 hover:shadow-lg transition-all">
+                <div className="flex items-center gap-4">
+                  {/* Rank */}
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0"
+                    style={{ backgroundColor: theme.colors.primary }}
+                  >
+                    {index + 1}
+                  </div>
+
+                  {/* Referrer Info */}
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-1">{referrer.referrerName}</h3>
+                    <p className="text-sm text-gray-500 mb-2">
+                      {referrer.referrerEmail} • Code: <span className="font-mono">{referrer.referralCode}</span>
+                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div>
+                        <p className="text-xs text-gray-600">Total Referrals</p>
+                        <p className="text-sm font-semibold text-gray-900">{referrer.totalReferrals}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-600">Completed</p>
+                        <p className="text-sm font-semibold text-green-600">{referrer.completedReferrals}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-600">Points Earned</p>
+                        <p className="text-sm font-semibold" style={{ color: theme.colors.primary }}>
+                          {referrer.totalPointsEarned}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-600">Points Redeemed</p>
+                        <p className="text-sm font-semibold text-purple-600">{referrer.totalPointsRedeemed}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Referral Detail Modal */}
+      {showReferralDetail && selectedReferral && (
+        <ReferralDetailModal
+          referral={selectedReferral}
+          onClose={() => {
+            setShowReferralDetail(false);
+            setSelectedReferral(null);
+          }}
+          onAdjustPoints={handleAdjustPoints}
+        />
+      )}
+    </div>
+  );
+};
+
+/**
+ * Referral Detail Modal Component
+ */
+const ReferralDetailModal = ({ referral, onClose, onAdjustPoints }) => {
+  if (!referral) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div
+        className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Modal Header */}
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Referral Details</h2>
+            <p className="text-sm text-gray-600">Code: {referral.referralCode}</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Modal Content */}
+        <div className="p-6">
+          {/* Referrer Information */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Referrer Information</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-medium text-gray-700">Name</label>
+                <p className="text-sm text-gray-900">{referral.referrerName}</p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-700">Email</label>
+                <p className="text-sm text-gray-900">{referral.referrerEmail}</p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-700">Referral Code</label>
+                <p className="text-sm text-gray-900 font-mono">{referral.referralCode}</p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-700">Referrer ID</label>
+                <p className="text-sm text-gray-900">{referral.referrerId}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Referred User Information */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Referred User Information</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-medium text-gray-700">Name</label>
+                <p className="text-sm text-gray-900">{referral.referredUserName}</p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-700">Email</label>
+                <p className="text-sm text-gray-900">{referral.referredUserEmail}</p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-700">Referred User ID</label>
+                <p className="text-sm text-gray-900">{referral.referredUserId}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Referral Details */}
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Referral Details</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-medium text-gray-700">Status</label>
+                <p className="text-sm text-gray-900 capitalize">{referral.status}</p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-700">Points Earned</label>
+                <p className="text-sm font-semibold" style={{ color: theme.colors.primary }}>
+                  {referral.pointsEarned}
+                </p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-700">Referral Date</label>
+                <p className="text-sm text-gray-900">{new Date(referral.referralDate).toLocaleString()}</p>
+              </div>
+              {referral.completedDate && (
+                <div>
+                  <label className="text-xs font-medium text-gray-700">Completed Date</label>
+                  <p className="text-sm text-gray-900">{new Date(referral.completedDate).toLocaleString()}</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Redemption History */}
+          {referral.redemptionHistory.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Redemption History</h3>
+              <div className="space-y-2">
+                {referral.redemptionHistory.map((redemption, index) => (
+                  <div key={index} className="p-3 bg-purple-50 rounded-lg">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{redemption.description}</p>
+                        <p className="text-xs text-gray-500">{new Date(redemption.date).toLocaleString()}</p>
+                      </div>
+                      <span className="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs font-medium">
+                        -{redemption.points} points
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Modal Footer */}
+        <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex gap-3 justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+          >
+            Close
+          </button>
+          <button
+            onClick={() => {
+              const points = prompt('Enter points to add (negative to subtract):');
+              if (points) {
+                onAdjustPoints(referral.id, parseInt(points));
+                onClose();
+              }
+            }}
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            Adjust Points
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ReferralManagementPage;
+

@@ -1,9 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy } from "react";
 import ProtectedRoute from "../components/layout/ProtectedRoute";
+import AdminRoute from "../components/layout/AdminRoute";
 import OwnerRoute from "../components/layout/OwnerRoute";
 import ProfileCompleteRoute from "../components/layout/ProfileCompleteRoute";
 import PageLayout from "../components/layout/PageLayout";
+import AdminLayout from "../components/admin/layout/AdminLayout";
 
 // Lazy load pages for code splitting (better performance)
 const HomePage = lazy(() => import("../pages/home/HomePage"));
@@ -53,6 +55,42 @@ const SettingsPage = lazy(() => import("../pages/profile/SettingsPage"));
 const AdminDashboardPage = lazy(() =>
   import("../pages/admin/AdminDashboardPage")
 );
+const UserListPage = lazy(() =>
+  import("../pages/admin/users/UserListPage")
+);
+const KYCListPage = lazy(() =>
+  import("../pages/admin/kyc/KYCListPage")
+);
+const GuarantorListPage = lazy(() =>
+  import("../pages/admin/guarantors/GuarantorListPage")
+);
+const CarListPage = lazy(() =>
+  import("../pages/admin/cars/CarListPage")
+);
+const BookingListPage = lazy(() =>
+  import("../pages/admin/bookings/BookingListPage")
+);
+const PaymentListPage = lazy(() =>
+  import("../pages/admin/payments/PaymentListPage")
+);
+const TrackingPage = lazy(() =>
+  import("../pages/admin/tracking/TrackingPage")
+);
+const ReferralManagementPage = lazy(() =>
+  import("../pages/admin/referrals/ReferralManagementPage")
+);
+const PricingManagementPage = lazy(() =>
+  import("../pages/admin/pricing/PricingManagementPage")
+);
+const CouponManagementPage = lazy(() =>
+  import("../pages/admin/coupons/CouponManagementPage")
+);
+const ReportsPage = lazy(() =>
+  import("../pages/admin/reports/ReportsPage")
+);
+const AdminSettingsPage = lazy(() =>
+  import("../pages/admin/settings/AdminSettingsPage")
+);
 const OwnerDashboardPage = lazy(() =>
   import("../pages/owner/OwnerDashboardPage")
 );
@@ -86,9 +124,166 @@ const router = createBrowserRouter([
         path: "verify-otp",
         element: <VerifyOTPPage />,
       },
+      // Admin Routes (require admin role and use AdminLayout)
       {
-        path: "admin/dashboard",
-        element: <AdminDashboardPage />,
+        element: <AdminRoute />,
+        children: [
+          {
+            element: <AdminLayout />,
+            children: [
+              {
+                path: "admin/dashboard",
+                element: <AdminDashboardPage />,
+              },
+              {
+                path: "admin/users",
+                element: <UserListPage />,
+              },
+              {
+                path: "admin/kyc",
+                element: <KYCListPage />,
+              },
+              {
+                path: "admin/kyc/pending",
+                element: <KYCListPage />,
+              },
+              {
+                path: "admin/kyc/approved",
+                element: <KYCListPage />,
+              },
+              {
+                path: "admin/kyc/rejected",
+                element: <KYCListPage />,
+              },
+              {
+                path: "admin/guarantors",
+                element: <GuarantorListPage />,
+              },
+              {
+                path: "admin/guarantors/pending",
+                element: <GuarantorListPage />,
+              },
+              {
+                path: "admin/cars",
+                element: <CarListPage />,
+              },
+              {
+                path: "admin/cars/pending",
+                element: <CarListPage />,
+              },
+              {
+                path: "admin/bookings",
+                element: <BookingListPage />,
+              },
+              {
+                path: "admin/bookings/pending",
+                element: <BookingListPage />,
+              },
+              {
+                path: "admin/bookings/active",
+                element: <BookingListPage />,
+              },
+              {
+                path: "admin/payments",
+                element: <PaymentListPage />,
+              },
+              {
+                path: "admin/payments/pending",
+                element: <PaymentListPage />,
+              },
+              {
+                path: "admin/payments/failed",
+                element: <PaymentListPage />,
+              },
+              {
+                path: "admin/tracking",
+                element: <TrackingPage />,
+              },
+              {
+                path: "admin/tracking/active",
+                element: <TrackingPage />,
+              },
+              {
+                path: "admin/tracking/history",
+                element: <TrackingPage />,
+              },
+              {
+                path: "admin/referrals",
+                element: <ReferralManagementPage />,
+              },
+              {
+                path: "admin/referrals/statistics",
+                element: <ReferralManagementPage />,
+              },
+              {
+                path: "admin/referrals/top-referrers",
+                element: <ReferralManagementPage />,
+              },
+              {
+                path: "admin/pricing",
+                element: <PricingManagementPage />,
+              },
+              {
+                path: "admin/pricing/holidays",
+                element: <PricingManagementPage />,
+              },
+              {
+                path: "admin/pricing/surge",
+                element: <PricingManagementPage />,
+              },
+              {
+                path: "admin/coupons",
+                element: <CouponManagementPage />,
+              },
+              {
+                path: "admin/reports",
+                element: <ReportsPage />,
+              },
+              {
+                path: "admin/reports/users",
+                element: <ReportsPage />,
+              },
+              {
+                path: "admin/reports/bookings",
+                element: <ReportsPage />,
+              },
+              {
+                path: "admin/reports/revenue",
+                element: <ReportsPage />,
+              },
+              {
+                path: "admin/reports/custom",
+                element: <ReportsPage />,
+              },
+              {
+                path: "admin/settings",
+                element: <AdminSettingsPage />,
+              },
+              {
+                path: "admin/settings/notifications",
+                element: <AdminSettingsPage />,
+              },
+              {
+                path: "admin/settings/security",
+                element: <AdminSettingsPage />,
+              },
+              {
+                path: "admin/settings/features",
+                element: <AdminSettingsPage />,
+              },
+              // Other admin routes will be added here
+              // {
+              //   path: "admin/users",
+              //   element: <AdminUsersPage />,
+              // },
+              // {
+              //   path: "admin/kyc",
+              //   element: <AdminKYCPage />,
+              // },
+              // etc...
+            ],
+          },
+        ],
       },
       {
         path: "cars",
