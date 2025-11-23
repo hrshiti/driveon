@@ -40,3 +40,4 @@ const OTP = mongoose.model('OTP', otpSchema);
 
 export default OTP;
 
+
