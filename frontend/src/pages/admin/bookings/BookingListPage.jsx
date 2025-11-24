@@ -391,7 +391,6 @@ const BookingListPage = () => {
       completed: 'bg-gray-100 text-gray-800',
       cancelled: 'bg-red-100 text-red-800',
       paid: 'bg-green-100 text-green-800',
-      pending: 'bg-yellow-100 text-yellow-800',
       refunded: 'bg-purple-100 text-purple-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
@@ -446,7 +445,7 @@ const BookingListPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-6 md:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 pt-20 pb-6 md:px-6 md:pt-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -529,7 +528,7 @@ const BookingListPage = () => {
               <select
                 value={filters.status}
                 onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All</option>
                 <option value="pending">Pending</option>
@@ -546,7 +545,7 @@ const BookingListPage = () => {
               <select
                 value={filters.paymentStatus}
                 onChange={(e) => setFilters({ ...filters, paymentStatus: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All</option>
                 <option value="paid">Paid</option>
@@ -561,7 +560,7 @@ const BookingListPage = () => {
               <select
                 value={filters.dateRange}
                 onChange={(e) => setFilters({ ...filters, dateRange: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All Time</option>
                 <option value="today">Today</option>
@@ -576,7 +575,7 @@ const BookingListPage = () => {
               <select
                 value={filters.car}
                 onChange={(e) => setFilters({ ...filters, car: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All Cars</option>
                 {cars.map((car) => (
@@ -593,7 +592,7 @@ const BookingListPage = () => {
               <select
                 value={filters.user}
                 onChange={(e) => setFilters({ ...filters, user: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All Users</option>
                 {users.map((user) => (

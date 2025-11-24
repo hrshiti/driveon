@@ -19,8 +19,14 @@ export const authenticate = async (req, res, next) => {
 
     const token = authHeader.substring(7);
 
+    // Check if JWT_SECRET is configured
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret || jwtSecret === 'your-secret-key-change-in-production') {
+      console.error('⚠️ JWT_SECRET not properly configured!');
+    }
+
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const decoded = jwt.verify(token, jwtSecret || 'your-secret-key');
 
     // Get user from database
     const user = await User.findById(decoded.id);
@@ -43,21 +49,30 @@ export const authenticate = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    // Enhanced error logging
+    console.error('Authentication error:', {
+      name: error.name,
+      message: error.message,
+      url: req.url,
+      method: req.method,
+    });
+
     if (error.name === 'JsonWebTokenError') {
       return res.status(401).json({
         success: false,
-        message: 'Invalid token',
+        message: 'Invalid token. Please log in again.',
       });
     }
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,
-        message: 'Token expired',
+        message: 'Token expired. Please log in again.',
       });
     }
     res.status(500).json({
       success: false,
-      message: 'Server error',
+      message: 'Server error during authentication',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined,
     });
   }
 };

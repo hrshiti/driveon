@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { theme } from '../../../theme/theme.constants';
-import Card from '../../../components/common/Card';
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { theme } from "../../../theme/theme.constants";
+import Card from "../../../components/common/Card";
 
 /**
  * KYC List Page
@@ -11,33 +11,33 @@ import Card from '../../../components/common/Card';
 const KYCListPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   // Get initial status from URL (pending, approved, rejected)
   const getInitialStatus = () => {
-    if (location.pathname.includes('/pending')) return 'pending';
-    if (location.pathname.includes('/approved')) return 'approved';
-    if (location.pathname.includes('/rejected')) return 'rejected';
-    return 'all';
+    if (location.pathname.includes("/pending")) return "pending";
+    if (location.pathname.includes("/approved")) return "approved";
+    if (location.pathname.includes("/rejected")) return "rejected";
+    return "all";
   };
 
   // State management
   const [kycList, setKycList] = useState([]);
   const [filteredKYC, setFilteredKYC] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedKYC, setSelectedKYC] = useState(null);
   const [showKYCDetail, setShowKYCDetail] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [showRejectModal, setShowRejectModal] = useState(false);
-  const [rejectReason, setRejectReason] = useState('');
+  const [rejectReason, setRejectReason] = useState("");
   const [rejectingKYCId, setRejectingKYCId] = useState(null);
-  
+
   // Filter states
   const [filters, setFilters] = useState({
     status: getInitialStatus(), // all, pending, approved, rejected
-    documentType: 'all', // all, aadhaar, pan, driving_license
-    userType: 'all', // all, regular, guarantor, owner
-    submissionDate: 'all', // all, today, week, month
+    documentType: "all", // all, aadhaar, pan, driving_license
+    userType: "all", // all, regular, guarantor, owner
+    submissionDate: "all", // all, today, week, month
   });
 
   // Mock KYC data
@@ -46,120 +46,121 @@ const KYCListPage = () => {
     setTimeout(() => {
       const mockKYC = [
         {
-          id: '1',
-          userId: '1',
-          userName: 'John Doe',
-          userEmail: 'john.doe@example.com',
-          userPhone: '+91 98765 43210',
-          documentType: 'aadhaar',
-          documentNumber: 'XXXX XXXX 1234',
-          status: 'pending',
-          submissionDate: '2024-03-15T10:30:00',
+          id: "1",
+          userId: "1",
+          userName: "John Doe",
+          userEmail: "john.doe@example.com",
+          userPhone: "+91 98765 43210",
+          documentType: "aadhaar",
+          documentNumber: "XXXX XXXX 1234",
+          status: "pending",
+          submissionDate: "2024-03-15T10:30:00",
           digiLockerVerified: true,
           documentImage: null, // In real app, this would be image URL
-          userType: 'regular',
+          userType: "regular",
         },
         {
-          id: '2',
-          userId: '2',
-          userName: 'Jane Smith',
-          userEmail: 'jane.smith@example.com',
-          userPhone: '+91 98765 43211',
-          documentType: 'pan',
-          documentNumber: 'ABCDE1234F',
-          status: 'pending',
-          submissionDate: '2024-03-14T14:20:00',
+          id: "2",
+          userId: "2",
+          userName: "Jane Smith",
+          userEmail: "jane.smith@example.com",
+          userPhone: "+91 98765 43211",
+          documentType: "pan",
+          documentNumber: "ABCDE1234F",
+          status: "pending",
+          submissionDate: "2024-03-14T14:20:00",
           digiLockerVerified: false,
           documentImage: null,
-          userType: 'guarantor',
+          userType: "guarantor",
         },
         {
-          id: '3',
-          userId: '3',
-          userName: 'Mike Johnson',
-          userEmail: 'mike.j@example.com',
-          userPhone: '+91 98765 43212',
-          documentType: 'driving_license',
-          documentNumber: 'DL-01-2020-1234567',
-          status: 'approved',
-          submissionDate: '2024-03-10T09:15:00',
-          approvedDate: '2024-03-11T11:00:00',
+          id: "3",
+          userId: "3",
+          userName: "Mike Johnson",
+          userEmail: "mike.j@example.com",
+          userPhone: "+91 98765 43212",
+          documentType: "driving_license",
+          documentNumber: "DL-01-2020-1234567",
+          status: "approved",
+          submissionDate: "2024-03-10T09:15:00",
+          approvedDate: "2024-03-11T11:00:00",
           digiLockerVerified: true,
           documentImage: null,
-          userType: 'owner',
+          userType: "owner",
         },
         {
-          id: '4',
-          userId: '4',
-          userName: 'Sarah Williams',
-          userEmail: 'sarah.w@example.com',
-          userPhone: '+91 98765 43213',
-          documentType: 'aadhaar',
-          documentNumber: 'XXXX XXXX 5678',
-          status: 'rejected',
-          submissionDate: '2024-03-12T16:45:00',
-          rejectedDate: '2024-03-13T10:30:00',
-          rejectionReason: 'Document image is unclear. Please upload a clear image.',
+          id: "4",
+          userId: "4",
+          userName: "Sarah Williams",
+          userEmail: "sarah.w@example.com",
+          userPhone: "+91 98765 43213",
+          documentType: "aadhaar",
+          documentNumber: "XXXX XXXX 5678",
+          status: "rejected",
+          submissionDate: "2024-03-12T16:45:00",
+          rejectedDate: "2024-03-13T10:30:00",
+          rejectionReason:
+            "Document image is unclear. Please upload a clear image.",
           digiLockerVerified: false,
           documentImage: null,
-          userType: 'regular',
+          userType: "regular",
         },
         {
-          id: '5',
-          userId: '5',
-          userName: 'David Brown',
-          userEmail: 'david.b@example.com',
-          userPhone: '+91 98765 43214',
-          documentType: 'aadhaar',
-          documentNumber: 'XXXX XXXX 9012',
-          status: 'pending',
-          submissionDate: '2024-03-16T08:20:00',
+          id: "5",
+          userId: "5",
+          userName: "David Brown",
+          userEmail: "david.b@example.com",
+          userPhone: "+91 98765 43214",
+          documentType: "aadhaar",
+          documentNumber: "XXXX XXXX 9012",
+          status: "pending",
+          submissionDate: "2024-03-16T08:20:00",
           digiLockerVerified: true,
           documentImage: null,
-          userType: 'regular',
+          userType: "regular",
         },
         {
-          id: '6',
-          userId: '6',
-          userName: 'Emily Davis',
-          userEmail: 'emily.d@example.com',
-          userPhone: '+91 98765 43215',
-          documentType: 'pan',
-          documentNumber: 'FGHIJ5678K',
-          status: 'pending',
-          submissionDate: '2024-03-15T12:10:00',
+          id: "6",
+          userId: "6",
+          userName: "Emily Davis",
+          userEmail: "emily.d@example.com",
+          userPhone: "+91 98765 43215",
+          documentType: "pan",
+          documentNumber: "FGHIJ5678K",
+          status: "pending",
+          submissionDate: "2024-03-15T12:10:00",
           digiLockerVerified: false,
           documentImage: null,
-          userType: 'guarantor',
+          userType: "guarantor",
         },
         {
-          id: '7',
-          userId: '7',
-          userName: 'Robert Wilson',
-          userEmail: 'robert.w@example.com',
-          userPhone: '+91 98765 43216',
-          documentType: 'driving_license',
-          documentNumber: 'DL-02-2019-7654321',
-          status: 'approved',
-          submissionDate: '2024-03-08T15:30:00',
-          approvedDate: '2024-03-09T09:00:00',
+          id: "7",
+          userId: "7",
+          userName: "Robert Wilson",
+          userEmail: "robert.w@example.com",
+          userPhone: "+91 98765 43216",
+          documentType: "driving_license",
+          documentNumber: "DL-02-2019-7654321",
+          status: "approved",
+          submissionDate: "2024-03-08T15:30:00",
+          approvedDate: "2024-03-09T09:00:00",
           digiLockerVerified: true,
           documentImage: null,
-          userType: 'regular',
+          userType: "regular",
         },
         {
-          id: '8',
-          userId: '8',
-          userName: 'Lisa Anderson',
-          userEmail: 'lisa.a@example.com',
-          userPhone: '+91 98765 43217',
-          documentType: 'aadhaar',
-          documentNumber: 'XXXX XXXX 3456',
-          status: 'pending',
-          submissionDate: '2024-03-17T11:00:00',
+          id: "8",
+          userId: "8",
+          userName: "Lisa Anderson",
+          userEmail: "lisa.a@example.com",
+          userPhone: "+91 98765 43217",
+          documentType: "aadhaar",
+          documentNumber: "XXXX XXXX 3456",
+          status: "pending",
+          submissionDate: "2024-03-17T11:00:00",
           digiLockerVerified: true,
           documentImage: null,
-          userType: 'owner',
+          userType: "owner",
         },
       ];
       setKycList(mockKYC);
@@ -185,32 +186,34 @@ const KYCListPage = () => {
     }
 
     // Status filter
-    if (filters.status !== 'all') {
+    if (filters.status !== "all") {
       filtered = filtered.filter((kyc) => kyc.status === filters.status);
     }
 
     // Document type filter
-    if (filters.documentType !== 'all') {
-      filtered = filtered.filter((kyc) => kyc.documentType === filters.documentType);
+    if (filters.documentType !== "all") {
+      filtered = filtered.filter(
+        (kyc) => kyc.documentType === filters.documentType
+      );
     }
 
     // User type filter
-    if (filters.userType !== 'all') {
+    if (filters.userType !== "all") {
       filtered = filtered.filter((kyc) => kyc.userType === filters.userType);
     }
 
     // Submission date filter
-    if (filters.submissionDate !== 'all') {
+    if (filters.submissionDate !== "all") {
       const now = new Date();
       filtered = filtered.filter((kyc) => {
         const subDate = new Date(kyc.submissionDate);
         switch (filters.submissionDate) {
-          case 'today':
+          case "today":
             return subDate.toDateString() === now.toDateString();
-          case 'week':
+          case "week":
             const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
             return subDate >= weekAgo;
-          case 'month':
+          case "month":
             const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
             return subDate >= monthAgo;
           default:
@@ -229,7 +232,7 @@ const KYCListPage = () => {
         if (kyc.id === kycId) {
           return {
             ...kyc,
-            status: 'approved',
+            status: "approved",
             approvedDate: new Date().toISOString(),
           };
         }
@@ -245,7 +248,7 @@ const KYCListPage = () => {
         if (kyc.id === kycId) {
           return {
             ...kyc,
-            status: 'rejected',
+            status: "rejected",
             rejectedDate: new Date().toISOString(),
             rejectionReason: reason,
           };
@@ -255,7 +258,7 @@ const KYCListPage = () => {
     );
     setSelectedItems(selectedItems.filter((id) => id !== kycId));
     setShowRejectModal(false);
-    setRejectReason('');
+    setRejectReason("");
     setRejectingKYCId(null);
   };
 
@@ -265,7 +268,7 @@ const KYCListPage = () => {
         if (selectedItems.includes(kyc.id)) {
           return {
             ...kyc,
-            status: 'approved',
+            status: "approved",
             approvedDate: new Date().toISOString(),
           };
         }
@@ -277,7 +280,7 @@ const KYCListPage = () => {
 
   const handleBulkReject = () => {
     if (selectedItems.length > 0) {
-      setRejectingKYCId('bulk');
+      setRejectingKYCId("bulk");
       setShowRejectModal(true);
     }
   };
@@ -288,7 +291,7 @@ const KYCListPage = () => {
         if (selectedItems.includes(kyc.id)) {
           return {
             ...kyc,
-            status: 'rejected',
+            status: "rejected",
             rejectedDate: new Date().toISOString(),
             rejectionReason: reason,
           };
@@ -298,13 +301,15 @@ const KYCListPage = () => {
     );
     setSelectedItems([]);
     setShowRejectModal(false);
-    setRejectReason('');
+    setRejectReason("");
     setRejectingKYCId(null);
   };
 
   const handleSelectItem = (kycId) => {
     setSelectedItems((prev) =>
-      prev.includes(kycId) ? prev.filter((id) => id !== kycId) : [...prev, kycId]
+      prev.includes(kycId)
+        ? prev.filter((id) => id !== kycId)
+        : [...prev, kycId]
     );
   };
 
@@ -329,19 +334,19 @@ const KYCListPage = () => {
   // Get status badge color
   const getStatusColor = (status) => {
     const colors = {
-      pending: 'bg-yellow-100 text-yellow-800',
-      approved: 'bg-green-100 text-green-800',
-      rejected: 'bg-red-100 text-red-800',
+      pending: "bg-yellow-100 text-yellow-800",
+      approved: "bg-green-100 text-green-800",
+      rejected: "bg-red-100 text-red-800",
     };
-    return colors[status] || 'bg-gray-100 text-gray-800';
+    return colors[status] || "bg-gray-100 text-gray-800";
   };
 
   // Get document type display name
   const getDocumentTypeName = (type) => {
     const names = {
-      aadhaar: 'Aadhaar',
-      pan: 'PAN',
-      driving_license: 'Driving License',
+      aadhaar: "Aadhaar",
+      pan: "PAN",
+      driving_license: "Driving License",
     };
     return names[type] || type;
   };
@@ -349,9 +354,9 @@ const KYCListPage = () => {
   // Stats calculation
   const stats = {
     total: kycList.length,
-    pending: kycList.filter((k) => k.status === 'pending').length,
-    approved: kycList.filter((k) => k.status === 'approved').length,
-    rejected: kycList.filter((k) => k.status === 'rejected').length,
+    pending: kycList.filter((k) => k.status === "pending").length,
+    approved: kycList.filter((k) => k.status === "approved").length,
+    rejected: kycList.filter((k) => k.status === "rejected").length,
   };
 
   if (loading) {
@@ -370,15 +375,20 @@ const KYCListPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-6 md:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 pt-20 pb-6 md:px-6 md:pt-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2" style={{ color: theme.colors.primary }}>
+              <h1
+                className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2"
+                style={{ color: theme.colors.primary }}
+              >
                 KYC Verification
               </h1>
-              <p className="text-sm md:text-base text-gray-600">Review and verify user documents</p>
+              <p className="text-sm md:text-base text-gray-600">
+                Review and verify user documents
+              </p>
             </div>
             <div className="flex gap-2">
               {selectedItems.length > 0 && (
@@ -404,21 +414,30 @@ const KYCListPage = () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6 max-w-4xl">
           <Card className="p-3 text-center">
-            <div className="text-xl md:text-2xl font-bold mb-1" style={{ color: theme.colors.primary }}>
+            <div
+              className="text-xl md:text-2xl font-bold mb-1"
+              style={{ color: theme.colors.primary }}
+            >
               {stats.total}
             </div>
             <div className="text-xs text-gray-600">Total KYC</div>
           </Card>
           <Card className="p-3 text-center">
-            <div className="text-xl md:text-2xl font-bold mb-1 text-yellow-600">{stats.pending}</div>
+            <div className="text-xl md:text-2xl font-bold mb-1 text-yellow-600">
+              {stats.pending}
+            </div>
             <div className="text-xs text-gray-600">Pending</div>
           </Card>
           <Card className="p-3 text-center">
-            <div className="text-xl md:text-2xl font-bold mb-1 text-green-600">{stats.approved}</div>
+            <div className="text-xl md:text-2xl font-bold mb-1 text-green-600">
+              {stats.approved}
+            </div>
             <div className="text-xs text-gray-600">Approved</div>
           </Card>
           <Card className="p-3 text-center">
-            <div className="text-xl md:text-2xl font-bold mb-1 text-red-600">{stats.rejected}</div>
+            <div className="text-xl md:text-2xl font-bold mb-1 text-red-600">
+              {stats.rejected}
+            </div>
             <div className="text-xs text-gray-600">Rejected</div>
           </Card>
         </div>
@@ -434,7 +453,12 @@ const KYCListPage = () => {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
               <input
                 type="text"
@@ -450,11 +474,15 @@ const KYCListPage = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {/* Status Filter */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Status
+              </label>
               <select
                 value={filters.status}
-                onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                onChange={(e) =>
+                  setFilters({ ...filters, status: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All</option>
                 <option value="pending">Pending</option>
@@ -465,11 +493,15 @@ const KYCListPage = () => {
 
             {/* Document Type Filter */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Document Type</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Document Type
+              </label>
               <select
                 value={filters.documentType}
-                onChange={(e) => setFilters({ ...filters, documentType: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                onChange={(e) =>
+                  setFilters({ ...filters, documentType: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All</option>
                 <option value="aadhaar">Aadhaar</option>
@@ -480,11 +512,15 @@ const KYCListPage = () => {
 
             {/* User Type Filter */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">User Type</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                User Type
+              </label>
               <select
                 value={filters.userType}
-                onChange={(e) => setFilters({ ...filters, userType: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                onChange={(e) =>
+                  setFilters({ ...filters, userType: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All</option>
                 <option value="regular">Regular</option>
@@ -495,11 +531,15 @@ const KYCListPage = () => {
 
             {/* Submission Date Filter */}
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Submitted</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">
+                Submitted
+              </label>
               <select
                 value={filters.submissionDate}
-                onChange={(e) => setFilters({ ...filters, submissionDate: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                onChange={(e) =>
+                  setFilters({ ...filters, submissionDate: e.target.value })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All Time</option>
                 <option value="today">Today</option>
@@ -513,13 +553,18 @@ const KYCListPage = () => {
         {/* KYC List */}
         <div className="mb-4 flex items-center justify-between">
           <p className="text-sm text-gray-600">
-            Showing <span className="font-semibold">{filteredKYC.length}</span> of <span className="font-semibold">{kycList.length}</span> verifications
+            Showing <span className="font-semibold">{filteredKYC.length}</span>{" "}
+            of <span className="font-semibold">{kycList.length}</span>{" "}
+            verifications
           </p>
           {filteredKYC.length > 0 && (
             <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
               <input
                 type="checkbox"
-                checked={selectedItems.length === filteredKYC.length && filteredKYC.length > 0}
+                checked={
+                  selectedItems.length === filteredKYC.length &&
+                  filteredKYC.length > 0
+                }
                 onChange={handleSelectAll}
                 className="w-4 h-4 rounded border-gray-300"
               />
@@ -545,42 +590,72 @@ const KYCListPage = () => {
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h3 className="font-semibold text-gray-900 mb-1">{kyc.userName}</h3>
-                      <p className="text-xs text-gray-500 mb-1">{kyc.userEmail}</p>
+                      <h3 className="font-semibold text-gray-900 mb-1">
+                        {kyc.userName}
+                      </h3>
+                      <p className="text-xs text-gray-500 mb-1">
+                        {kyc.userEmail}
+                      </p>
                       <p className="text-xs text-gray-500">{kyc.userPhone}</p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(kyc.status)}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                        kyc.status
+                      )}`}
+                    >
                       {kyc.status.charAt(0).toUpperCase() + kyc.status.slice(1)}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                     <div>
-                      <label className="text-xs font-medium text-gray-700">Document Type</label>
-                      <p className="text-sm text-gray-900">{getDocumentTypeName(kyc.documentType)}</p>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-gray-700">Document Number</label>
-                      <p className="text-sm text-gray-900 font-mono">{kyc.documentNumber}</p>
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium text-gray-700">DigiLocker</label>
-                      <p className={`text-sm font-medium ${kyc.digiLockerVerified ? 'text-green-600' : 'text-red-600'}`}>
-                        {kyc.digiLockerVerified ? 'Verified' : 'Not Verified'}
+                      <label className="text-xs font-medium text-gray-700">
+                        Document Type
+                      </label>
+                      <p className="text-sm text-gray-900">
+                        {getDocumentTypeName(kyc.documentType)}
                       </p>
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-gray-700">Submitted</label>
+                      <label className="text-xs font-medium text-gray-700">
+                        Document Number
+                      </label>
+                      <p className="text-sm text-gray-900 font-mono">
+                        {kyc.documentNumber}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-gray-700">
+                        DigiLocker
+                      </label>
+                      <p
+                        className={`text-sm font-medium ${
+                          kyc.digiLockerVerified
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                      >
+                        {kyc.digiLockerVerified ? "Verified" : "Not Verified"}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-gray-700">
+                        Submitted
+                      </label>
                       <p className="text-sm text-gray-900">
                         {new Date(kyc.submissionDate).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
 
-                  {kyc.status === 'rejected' && kyc.rejectionReason && (
+                  {kyc.status === "rejected" && kyc.rejectionReason && (
                     <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-xs font-medium text-red-800 mb-1">Rejection Reason:</p>
-                      <p className="text-sm text-red-700">{kyc.rejectionReason}</p>
+                      <p className="text-xs font-medium text-red-800 mb-1">
+                        Rejection Reason:
+                      </p>
+                      <p className="text-sm text-red-700">
+                        {kyc.rejectionReason}
+                      </p>
                     </div>
                   )}
                 </div>
@@ -601,7 +676,7 @@ const KYCListPage = () => {
                 >
                   Download
                 </button>
-                {kyc.status === 'pending' && (
+                {kyc.status === "pending" && (
                   <>
                     <button
                       onClick={() => handleApprove(kyc.id)}
@@ -627,7 +702,9 @@ const KYCListPage = () => {
 
         {filteredKYC.length === 0 && (
           <Card className="p-8 text-center">
-            <p className="text-gray-600">No KYC verifications found matching your filters.</p>
+            <p className="text-gray-600">
+              No KYC verifications found matching your filters.
+            </p>
           </Card>
         )}
       </div>
@@ -653,14 +730,14 @@ const KYCListPage = () => {
       {showRejectModal && (
         <RejectModal
           kycId={rejectingKYCId}
-          isBulk={rejectingKYCId === 'bulk'}
+          isBulk={rejectingKYCId === "bulk"}
           onClose={() => {
             setShowRejectModal(false);
-            setRejectReason('');
+            setRejectReason("");
             setRejectingKYCId(null);
           }}
           onConfirm={(reason) => {
-            if (rejectingKYCId === 'bulk') {
+            if (rejectingKYCId === "bulk") {
               handleBulkRejectConfirm(reason);
             } else {
               handleReject(rejectingKYCId, reason);
@@ -677,12 +754,15 @@ const KYCListPage = () => {
  */
 const KYCDetailModal = ({ kyc, onClose, onApprove, onReject }) => {
   const [showRejectForm, setShowRejectForm] = useState(false);
-  const [rejectReason, setRejectReason] = useState('');
+  const [rejectReason, setRejectReason] = useState("");
 
   if (!kyc) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
       <div
         className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
@@ -690,15 +770,27 @@ const KYCDetailModal = ({ kyc, onClose, onApprove, onReject }) => {
         {/* Modal Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">KYC Verification Details</h2>
+            <h2 className="text-xl font-bold text-gray-900">
+              KYC Verification Details
+            </h2>
             <p className="text-sm text-gray-600">{kyc.userName}</p>
           </div>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-6 h-6 text-gray-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -707,49 +799,81 @@ const KYCDetailModal = ({ kyc, onClose, onApprove, onReject }) => {
         <div className="p-6">
           {/* User Information */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">User Information</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              User Information
+            </h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-medium text-gray-700">Name</label>
+                <label className="text-xs font-medium text-gray-700">
+                  Name
+                </label>
                 <p className="text-sm text-gray-900">{kyc.userName}</p>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-700">Email</label>
+                <label className="text-xs font-medium text-gray-700">
+                  Email
+                </label>
                 <p className="text-sm text-gray-900">{kyc.userEmail}</p>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-700">Phone</label>
+                <label className="text-xs font-medium text-gray-700">
+                  Phone
+                </label>
                 <p className="text-sm text-gray-900">{kyc.userPhone}</p>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-700">User Type</label>
-                <p className="text-sm text-gray-900 capitalize">{kyc.userType}</p>
+                <label className="text-xs font-medium text-gray-700">
+                  User Type
+                </label>
+                <p className="text-sm text-gray-900 capitalize">
+                  {kyc.userType}
+                </p>
               </div>
             </div>
           </div>
 
           {/* Document Information */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Document Information</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Document Information
+            </h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-medium text-gray-700">Document Type</label>
+                <label className="text-xs font-medium text-gray-700">
+                  Document Type
+                </label>
                 <p className="text-sm text-gray-900">
-                  {kyc.documentType === 'aadhaar' ? 'Aadhaar' : kyc.documentType === 'pan' ? 'PAN' : 'Driving License'}
+                  {kyc.documentType === "aadhaar"
+                    ? "Aadhaar"
+                    : kyc.documentType === "pan"
+                    ? "PAN"
+                    : "Driving License"}
                 </p>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-700">Document Number</label>
-                <p className="text-sm text-gray-900 font-mono">{kyc.documentNumber}</p>
-              </div>
-              <div>
-                <label className="text-xs font-medium text-gray-700">DigiLocker Status</label>
-                <p className={`text-sm font-medium ${kyc.digiLockerVerified ? 'text-green-600' : 'text-red-600'}`}>
-                  {kyc.digiLockerVerified ? 'Verified ✓' : 'Not Verified ✗'}
+                <label className="text-xs font-medium text-gray-700">
+                  Document Number
+                </label>
+                <p className="text-sm text-gray-900 font-mono">
+                  {kyc.documentNumber}
                 </p>
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-700">Submission Date</label>
+                <label className="text-xs font-medium text-gray-700">
+                  DigiLocker Status
+                </label>
+                <p
+                  className={`text-sm font-medium ${
+                    kyc.digiLockerVerified ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {kyc.digiLockerVerified ? "Verified ✓" : "Not Verified ✗"}
+                </p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-700">
+                  Submission Date
+                </label>
                 <p className="text-sm text-gray-900">
                   {new Date(kyc.submissionDate).toLocaleString()}
                 </p>
@@ -759,25 +883,45 @@ const KYCDetailModal = ({ kyc, onClose, onApprove, onReject }) => {
 
           {/* Document Image Preview */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Document Image</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Document Image
+            </h3>
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50">
               {kyc.documentImage ? (
-                <img src={kyc.documentImage} alt="Document" className="max-w-full max-h-96 mx-auto rounded-lg" />
+                <img
+                  src={kyc.documentImage}
+                  alt="Document"
+                  className="max-w-full max-h-96 mx-auto rounded-lg"
+                />
               ) : (
                 <div>
-                  <svg className="w-16 h-16 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  <svg
+                    className="w-16 h-16 text-gray-400 mx-auto mb-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
                   </svg>
-                  <p className="text-sm text-gray-500">Document image preview will appear here</p>
+                  <p className="text-sm text-gray-500">
+                    Document image preview will appear here
+                  </p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Rejection Reason (if rejected) */}
-          {kyc.status === 'rejected' && kyc.rejectionReason && (
+          {kyc.status === "rejected" && kyc.rejectionReason && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <h4 className="text-sm font-semibold text-red-800 mb-2">Rejection Reason</h4>
+              <h4 className="text-sm font-semibold text-red-800 mb-2">
+                Rejection Reason
+              </h4>
               <p className="text-sm text-red-700">{kyc.rejectionReason}</p>
               {kyc.rejectedDate && (
                 <p className="text-xs text-red-600 mt-2">
@@ -790,7 +934,9 @@ const KYCDetailModal = ({ kyc, onClose, onApprove, onReject }) => {
           {/* Reject Form */}
           {showRejectForm && (
             <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Rejection Reason *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Rejection Reason *
+              </label>
               <textarea
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
@@ -810,7 +956,7 @@ const KYCDetailModal = ({ kyc, onClose, onApprove, onReject }) => {
           >
             Close
           </button>
-          {kyc.status === 'pending' && (
+          {kyc.status === "pending" && (
             <>
               {!showRejectForm ? (
                 <>
@@ -852,18 +998,23 @@ const KYCDetailModal = ({ kyc, onClose, onApprove, onReject }) => {
  * Reject Modal Component
  */
 const RejectModal = ({ kycId, isBulk, onClose, onConfirm }) => {
-  const [reason, setReason] = useState('');
+  const [reason, setReason] = useState("");
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
       <div
         className="bg-white rounded-lg max-w-md w-full p-6"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          {isBulk ? 'Bulk Reject KYC' : 'Reject KYC Verification'}
+          {isBulk ? "Bulk Reject KYC" : "Reject KYC Verification"}
         </h3>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Rejection Reason *</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Rejection Reason *
+        </label>
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
@@ -896,4 +1047,3 @@ const RejectModal = ({ kycId, isBulk, onClose, onConfirm }) => {
 };
 
 export default KYCListPage;
-

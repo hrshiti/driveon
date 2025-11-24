@@ -166,17 +166,17 @@ export const uploadPhoto = async (req, res) => {
       });
     }
 
-    // Check if file is provided
-    if (!req.files || !req.files.photo) {
+    // Check if file is provided (multer stores file in req.file)
+    if (!req.file) {
       return res.status(400).json({
         success: false,
         message: 'Please provide a photo file',
       });
     }
 
-    const file = req.files.photo;
+    const file = req.file;
 
-    // Validate file type
+    // Validate file type (already validated by multer, but double-check)
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.mimetype)) {
       return res.status(400).json({
@@ -185,7 +185,7 @@ export const uploadPhoto = async (req, res) => {
       });
     }
 
-    // Validate file size (5MB max)
+    // Validate file size (already validated by multer, but double-check)
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
       return res.status(400).json({
@@ -194,8 +194,15 @@ export const uploadPhoto = async (req, res) => {
       });
     }
 
+    // Convert multer file to format expected by Cloudinary service
+    const fileForUpload = {
+      buffer: file.buffer,
+      mimetype: file.mimetype,
+      originalname: file.originalname,
+    };
+
     // Upload to Cloudinary
-    const uploadResult = await uploadImage(file, {
+    const uploadResult = await uploadImage(fileForUpload, {
       folder: 'driveon/profile-photos',
       width: 800,
       height: 800,
@@ -233,7 +240,14 @@ export const uploadPhoto = async (req, res) => {
       message: 'Profile photo uploaded successfully',
       data: {
         profilePhoto: uploadResult.secure_url,
-        profileComplete: user.profileComplete,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          profilePhoto: uploadResult.secure_url,
+          profileComplete: user.profileComplete,
+        },
       },
     });
   } catch (error) {

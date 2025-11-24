@@ -11,6 +11,10 @@ import toastUtils from '../../config/toast';
  * Register Schema Validation - OTP Based
  */
 const registerSchema = z.object({
+  fullName: z
+    .string()
+    .min(1, 'Full name is required')
+    .min(2, 'Full name must be at least 2 characters'),
   email: z
     .string()
     .min(1, 'Email is required')
@@ -55,6 +59,7 @@ const RegisterPage = () => {
   } = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: {
+      fullName: '',
       email: '',
       phone: '',
       referralCode: '',
@@ -68,6 +73,7 @@ const RegisterPage = () => {
     try {
       // Send OTP for registration
       const response = await authService.register({
+        fullName: data.fullName,
         email: data.email,
         phone: data.phone,
         referralCode: data.referralCode || undefined,
@@ -80,6 +86,7 @@ const RegisterPage = () => {
       // Navigate to OTP verification
       navigate('/verify-otp', {
         state: {
+          fullName: data.fullName,
           email: data.email,
           phone: data.phone,
           type: 'register',
@@ -134,18 +141,29 @@ const RegisterPage = () => {
 
       <div className="w-full max-w-md relative z-10">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+        <div className="text-center mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">
             Create Account
           </h1>
-          <p className="text-white/90 text-sm md:text-base">
+          <p className="text-white/90 text-xs md:text-sm">
             Sign up to get started with DriveOn
           </p>
         </div>
 
         {/* Register Card */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 md:p-8 shadow-2xl">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-5 shadow-2xl">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+            {/* Full Name Input */}
+            <Input
+              type="text"
+              label="Full Name"
+              placeholder="Enter your full name"
+              error={errors.fullName?.message}
+              {...register('fullName')}
+              autoComplete="name"
+              autoFocus
+            />
+
             {/* Email Input */}
             <Input
               type="email"
@@ -154,7 +172,6 @@ const RegisterPage = () => {
               error={errors.email?.message}
               {...register('email')}
               autoComplete="email"
-              autoFocus
             />
 
             {/* Phone Input */}
@@ -190,7 +207,7 @@ const RegisterPage = () => {
                     borderColor: '#d0d0d0'
                   }}
                 />
-                <span className="ml-3 text-sm text-gray-700">
+                <span className="ml-2 text-xs md:text-sm text-gray-700">
                   I agree to the{' '}
                   <Link
                     to="/terms"
@@ -226,7 +243,7 @@ const RegisterPage = () => {
               fullWidth
               isLoading={isLoading}
               disabled={isLoading}
-              className="mt-6"
+              className="mt-4"
               style={{ backgroundColor: '#3d096d' }}
             >
               Send OTP
@@ -235,8 +252,8 @@ const RegisterPage = () => {
         </div>
 
         {/* Sign In Link */}
-        <div className="mt-6 text-center">
-          <p className="text-white/90 text-sm md:text-base">
+        <div className="mt-4 text-center">
+          <p className="text-white/90 text-xs md:text-sm">
             Already have an account?{' '}
             <Link
               to="/login"

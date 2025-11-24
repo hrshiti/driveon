@@ -141,7 +141,7 @@ const AdminSettingsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-5xl mx-auto px-4 py-6 md:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto px-4 pt-20 md:pt-6 pb-6 md:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2" style={{ color: theme.colors.primary }}>

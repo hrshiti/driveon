@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import OTP from '../models/OTP.js';
 import { generateOTP, getOTPExpiry, isOTPExpired, sendOTP } from '../utils/otp.service.js';
@@ -53,8 +54,8 @@ export const register = async (req, res) => {
       }
     }
 
-    // Generate OTP
-    const otp = generateOTP().toString();
+    // Generate OTP (pass phone for test number detection)
+    const otp = generateOTP(phone).toString();
     const expiresAt = getOTPExpiry(10); // 10 minutes
 
     // Store OTP in database
@@ -67,10 +68,14 @@ export const register = async (req, res) => {
       isUsed: false,
     });
 
-    // Send OTP via SMS
+    // Send OTP via SMS (will skip for test numbers)
     try {
-      await sendOTP(phone, otp);
-      console.log(`✅ OTP sent successfully to ${phone}`);
+      const smsResult = await sendOTP(phone, otp);
+      if (smsResult.isTest) {
+        console.log(`🧪 Test mode: OTP ${otp} generated for ${phone} (SMS skipped)`);
+      } else {
+        console.log(`✅ OTP sent successfully to ${phone}`);
+      }
     } catch (smsError) {
       console.error('❌ SMS sending failed:', smsError.message);
       
@@ -156,8 +161,8 @@ export const sendLoginOTP = async (req, res) => {
       });
     }
 
-    // Generate OTP
-    const otp = generateOTP().toString();
+    // Generate OTP (pass phone for test number detection)
+    const otp = generateOTP(phone).toString();
     const expiresAt = getOTPExpiry(10); // 10 minutes
 
     // Store OTP in database
@@ -174,8 +179,12 @@ export const sendLoginOTP = async (req, res) => {
     // Send OTP via SMS (if phone) or Email (if email)
     try {
       if (phone) {
-        await sendOTP(phone, otp);
-        console.log(`✅ Login OTP sent successfully to ${phone}`);
+        const smsResult = await sendOTP(phone, otp);
+        if (smsResult.isTest) {
+          console.log(`🧪 Test mode: Login OTP ${otp} generated for ${phone} (SMS skipped)`);
+        } else {
+          console.log(`✅ Login OTP sent successfully to ${phone}`);
+        }
       } else {
         // TODO: Implement email OTP sending
         console.log(`⚠️ Email OTP not implemented yet. OTP: ${otp}`);
@@ -345,8 +354,8 @@ export const resendOTP = async (req, res) => {
       });
     }
 
-    // Generate new OTP
-    const otp = generateOTP().toString();
+    // Generate new OTP (pass phone for test number detection)
+    const otp = generateOTP(phone).toString();
     const expiresAt = getOTPExpiry(10); // 10 minutes
 
     // Store OTP in database
@@ -363,8 +372,12 @@ export const resendOTP = async (req, res) => {
     // Send OTP via SMS
     try {
       if (phone) {
-        await sendOTP(phone, otp);
-        console.log(`✅ OTP resent successfully to ${phone}`);
+        const smsResult = await sendOTP(phone, otp);
+        if (smsResult.isTest) {
+          console.log(`🧪 Test mode: OTP ${otp} resent for ${phone} (SMS skipped)`);
+        } else {
+          console.log(`✅ OTP resent successfully to ${phone}`);
+        }
       } else {
         // TODO: Implement email OTP sending
         console.log(`⚠️ Email OTP not implemented yet. OTP: ${otp}`);
@@ -418,17 +431,56 @@ export const refreshToken = async (req, res) => {
       });
     }
 
-    // TODO: Verify refresh token and generate new access token
-    // For now, return a simple response
+    // Verify refresh token
+    const decoded = jwt.verify(
+      refreshTokenValue,
+      process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key-change-in-production'
+    );
+
+    // Get user from database
+    const user = await User.findById(decoded.id);
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(401).json({
+        success: false,
+        message: 'User account is deactivated',
+      });
+    }
+
+    // Generate new access token
+    const newToken = generateToken(user._id.toString());
+
     res.status(200).json({
       success: true,
       message: 'Token refreshed successfully',
       data: {
-        token: generateToken('user_id'), // Placeholder
+        token: newToken,
       },
     });
   } catch (error) {
     console.error('Refresh token error:', error);
+    
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid refresh token',
+      });
+    }
+    
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({
+        success: false,
+        message: 'Refresh token expired. Please log in again.',
+      });
+    }
+    
     res.status(500).json({
       success: false,
       message: 'Server error during token refresh',

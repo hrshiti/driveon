@@ -28,30 +28,39 @@ const PageLayout = () => {
     /^\/booking\/[^/]+\/review$/
   ); // Matches /booking/:bookingId/review
 
+  // Check if current route is an admin panel page (excluding login/signup)
+  const isAdminPage = location.pathname.startsWith("/admin/") && 
+    !location.pathname.startsWith("/admin/login") && 
+    !location.pathname.startsWith("/admin/signup");
+
   // Routes where header and bottom navbar should be hidden
   const hideNavigationRoutes = [
     "/login",
     "/register",
     "/verify-otp",
+    "/admin/login",
+    "/admin/signup",
   ];
   const shouldHideNavigation = hideNavigationRoutes.includes(location.pathname);
 
-  // Hide default header on homepage, profile pages, booking pages, and cars page (they have custom headers)
+  // Hide default header on homepage, profile pages, booking pages, cars page, and admin pages (they have custom headers)
   const shouldShowHeader =
     !isHomePage &&
     !isProfilePage &&
     !isBookingPage &&
     !isCarsPage &&
+    !isAdminPage &&
     !shouldHideNavigation;
 
-  // Hide bottom navbar on car details page, car reviews page, booking form page, payment page, and review form page (they have their own bottom bars)
+  // Hide bottom navbar on car details page, car reviews page, booking form page, payment page, review form page, and all admin pages
   const shouldShowBottomNavbar =
     !shouldHideNavigation &&
     !isCarDetailsPage &&
     !isCarReviewsPage &&
     !isBookingFormPage &&
     !isBookingPaymentPage &&
-    !isReviewFormPage;
+    !isReviewFormPage &&
+    !isAdminPage;
 
   return (
     <div

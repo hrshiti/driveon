@@ -300,7 +300,7 @@ const PricingManagementPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-6 md:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 pt-20 pb-6 md:px-6 md:pt-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -565,7 +565,7 @@ const PricingManagementPage = () => {
                         type="number"
                         step="0.1"
                         defaultValue="0.9"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base"
                       />
                     </div>
                     <div>
@@ -574,7 +574,7 @@ const PricingManagementPage = () => {
                         type="number"
                         step="0.1"
                         defaultValue="1.0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base"
                       />
                     </div>
                     <div>
@@ -583,7 +583,7 @@ const PricingManagementPage = () => {
                         type="number"
                         step="0.1"
                         defaultValue="1.3"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base"
                       />
                     </div>
                     <div>
@@ -592,7 +592,7 @@ const PricingManagementPage = () => {
                         type="number"
                         step="0.1"
                         defaultValue="1.6"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-base"
                       />
                     </div>
                   </div>
@@ -610,7 +610,7 @@ const PricingManagementPage = () => {
                         type="number"
                         step="0.1"
                         defaultValue="1.2"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-base"
                       />
                     </div>
                     <div className="flex items-center gap-4">
@@ -619,7 +619,7 @@ const PricingManagementPage = () => {
                         type="number"
                         step="0.1"
                         defaultValue="1.3"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-base"
                       />
                     </div>
                     <div className="flex items-center gap-4">
@@ -628,7 +628,7 @@ const PricingManagementPage = () => {
                         type="number"
                         step="0.1"
                         defaultValue="1.1"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-base"
                       />
                     </div>
                   </div>

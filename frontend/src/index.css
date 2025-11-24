@@ -36,9 +36,26 @@
     @apply min-h-[44px] min-w-[44px];
   }
 
-  /* Mobile-friendly form inputs */
+  /* Mobile-friendly form inputs - Prevent zoom on iOS */
   input, textarea, select {
-    @apply text-base; /* Prevents zoom on iOS */
+    @apply text-base; /* 16px minimum prevents zoom on iOS */
+    font-size: 16px !important; /* Force 16px to prevent zoom */
+  }
+  
+  /* Ensure all form inputs maintain 16px on mobile */
+  @media (max-width: 767px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="password"],
+    input[type="search"],
+    input[type="date"],
+    input[type="time"],
+    textarea,
+    select {
+      font-size: 16px !important;
+    }
   }
 
   /* Smooth scrolling */
