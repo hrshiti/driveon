@@ -1,14 +1,12 @@
 import axios from 'axios';
 import { store } from '../store/store';
 import { logout, refreshTokenSuccess } from '../store/slices/authSlice';
+import { API_BASE_URL } from '../config/api';
 
 /**
  * Axios Instance Configuration
  * Base API configuration with interceptors
  */
-
-// Get base URL from environment variables
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://driveon-19hg.onrender.com/api';
 
 // Create axios instance
 const api = axios.create({
