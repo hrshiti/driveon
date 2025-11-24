@@ -287,7 +287,7 @@ const UserListPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-6 md:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 pt-20 pb-6 md:px-6 md:pt-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -364,7 +364,7 @@ const UserListPage = () => {
               <select
                 value={filters.accountStatus}
                 onChange={(e) => setFilters({ ...filters, accountStatus: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All</option>
                 <option value="active">Active</option>
@@ -379,7 +379,7 @@ const UserListPage = () => {
               <select
                 value={filters.kycStatus}
                 onChange={(e) => setFilters({ ...filters, kycStatus: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All</option>
                 <option value="verified">Verified</option>
@@ -394,7 +394,7 @@ const UserListPage = () => {
               <select
                 value={filters.profileCompletion}
                 onChange={(e) => setFilters({ ...filters, profileCompletion: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All</option>
                 <option value="complete">Complete</option>
@@ -408,7 +408,7 @@ const UserListPage = () => {
               <select
                 value={filters.userType}
                 onChange={(e) => setFilters({ ...filters, userType: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All</option>
                 <option value="regular">Regular</option>
@@ -423,7 +423,7 @@ const UserListPage = () => {
               <select
                 value={filters.registrationDate}
                 onChange={(e) => setFilters({ ...filters, registrationDate: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-base"
               >
                 <option value="all">All Time</option>
                 <option value="today">Today</option>

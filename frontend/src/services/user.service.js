@@ -64,6 +64,17 @@ export const userService = {
       return response.data;
     } catch (error) {
       console.error('Update profile error:', error);
+      
+      // Enhance error with user-friendly message
+      if (error.isNetworkError || error.code === 'ERR_NETWORK' || error.code === 'ERR_CONNECTION_REFUSED') {
+        const enhancedError = new Error(
+          error.message || 'Unable to connect to server. Please check your internet connection or try again later.'
+        );
+        enhancedError.code = error.code;
+        enhancedError.isNetworkError = true;
+        throw enhancedError;
+      }
+      
       throw error;
     }
   },
@@ -132,14 +143,23 @@ export const userService = {
       // Production mode - actual API call
       const api = (await import('./api')).default;
       const { API_ENDPOINTS } = await import('../constants');
-      const response = await api.post(API_ENDPOINTS.USER.UPLOAD_PHOTO, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      
+      // Don't set Content-Type header - let axios/browser set it with boundary
+      // The API interceptor will handle adding the Authorization header
+      const response = await api.post(API_ENDPOINTS.USER.UPLOAD_PHOTO, formData);
       return response.data;
     } catch (error) {
       console.error('Upload photo error:', error);
+      
+      // Provide user-friendly error messages
+      if (error.response?.status === 401) {
+        const errorMessage = error.response?.data?.message || 'Authentication failed. Please log in again.';
+        const authError = new Error(errorMessage);
+        authError.code = 'AUTH_ERROR';
+        authError.status = 401;
+        throw authError;
+      }
+      
       throw error;
     }
   },

@@ -27,9 +27,9 @@ const AdminHeader = () => {
   };
 
   return (
-    <header className="fixed top-0 right-0 left-0 lg:left-64 h-16 bg-white border-b border-gray-200 z-30 flex items-center justify-between px-4 md:px-6 lg:px-8">
+    <header className="fixed top-0 right-0 left-0 lg:left-64 h-16 bg-white border-b border-gray-200 z-30 flex items-center justify-between px-4 md:px-6 lg:px-8 overflow-x-hidden max-w-full">
       {/* Left Side - Search Bar (Desktop) */}
-      <div className="hidden md:flex flex-1 max-w-md">
+      <div className="hidden md:flex flex-1 max-w-md min-w-0">
         <div className="relative w-full">
           <svg
             className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
@@ -53,7 +53,7 @@ const AdminHeader = () => {
       </div>
 
       {/* Right Side - Admin Info & Actions */}
-      <div className="flex items-center gap-4 ml-auto">
+      <div className="flex items-center gap-4 ml-auto min-w-0 flex-shrink-0">
         {/* Notifications Icon */}
         <button
           className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"

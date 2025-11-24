@@ -6,10 +6,36 @@ import smsIndiaHubService from '../services/smsIndiaHubService.js';
  */
 
 /**
+ * Test phone numbers for development/testing
+ * These numbers will receive OTP 123456 without sending SMS
+ */
+const TEST_PHONE_NUMBERS = ['9993911855', '9685974247'];
+
+/**
+ * Check if a phone number is a test number
+ * @param {string} phone - Phone number to check
+ * @returns {boolean} - True if it's a test number
+ */
+export const isTestPhoneNumber = (phone) => {
+  if (!phone) return false;
+  // Remove all non-digit characters for comparison
+  const normalizedPhone = phone.replace(/\D/g, '');
+  // Check if it ends with any test number (handles cases with country code)
+  return TEST_PHONE_NUMBERS.some(testNum => normalizedPhone.endsWith(testNum));
+};
+
+/**
  * Generate 6-digit OTP
+ * @param {string} phone - Optional phone number (for test numbers)
  * @returns {string} - 6-digit OTP
  */
-export const generateOTP = () => {
+export const generateOTP = (phone = null) => {
+  // If it's a test phone number, return default OTP
+  if (phone && isTestPhoneNumber(phone)) {
+    return '123456';
+  }
+  
+  // Generate random 6-digit OTP
   const length = 6;
   const min = Math.pow(10, length - 1);
   const max = Math.pow(10, length) - 1;
@@ -43,6 +69,21 @@ export const isOTPExpired = (expiresAt) => {
  */
 export const sendOTP = async (phone, otp) => {
   try {
+    // Skip SMS sending for test phone numbers
+    if (isTestPhoneNumber(phone)) {
+      console.log(`🧪 Test phone number detected: ${phone}`);
+      console.log(`🧪 Skipping SMS send. OTP for testing: ${otp}`);
+      return {
+        success: true,
+        messageId: `test_${Date.now()}`,
+        status: 'skipped',
+        to: phone,
+        body: `Test OTP: ${otp}`,
+        provider: 'Test Mode',
+        isTest: true,
+      };
+    }
+    
     console.log(`📱 Attempting to send OTP ${otp} to phone: ${phone}`);
     
     const result = await smsIndiaHubService.sendOTP(phone, otp);

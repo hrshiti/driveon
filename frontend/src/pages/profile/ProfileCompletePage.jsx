@@ -122,6 +122,16 @@ const ProfileCompletePage = () => {
     } catch (error) {
       console.error('Photo upload error:', error);
       
+      // Handle authentication errors
+      if (error.status === 401 || error.code === 'AUTH_ERROR') {
+        toastUtils.error('Your session has expired. Please log in again.');
+        // Redirect to login after a short delay
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 2000);
+        return;
+      }
+      
       // In mock mode, even if there's an error, use the preview
       if (photoPreview) {
         dispatch(updateUser({ profilePhoto: photoPreview }));
@@ -129,7 +139,8 @@ const ProfileCompletePage = () => {
         toastUtils.success('Profile photo saved!');
         setCurrentStep(3);
       } else {
-        toastUtils.error('Failed to upload photo. You can skip and continue.');
+        const errorMessage = error.message || 'Failed to upload photo. You can skip and continue.';
+        toastUtils.error(errorMessage);
       }
     } finally {
       setIsUploading(false);
@@ -176,10 +187,17 @@ const ProfileCompletePage = () => {
     } catch (error) {
       console.error('Profile update error:', error);
       
-      const errorMessage = 
-        error.response?.data?.message || 
-        error.message || 
-        'Failed to update profile. Please try again.';
+      // Handle network errors with user-friendly messages
+      let errorMessage = 'Failed to update profile. Please try again.';
+      
+      if (error.isNetworkError || error.code === 'ERR_NETWORK' || error.code === 'ERR_CONNECTION_REFUSED') {
+        errorMessage = error.message || 
+          'Unable to connect to server. Please check your internet connection and try again.';
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
       
       toastUtils.error(errorMessage);
     } finally {

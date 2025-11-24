@@ -200,7 +200,12 @@ const VerifyOTPPage = () => {
                   <input
                     {...props}
                     className="w-11 h-12 md:w-14 md:h-16 text-center text-xl md:text-2xl font-bold border-2 border-gray-300 rounded-lg shadow-sm focus:ring-2 bg-white text-gray-900 transition-all hover:shadow-md"
-                    style={{ '--focus-border': '#3d096d', '--focus-ring': '#3d096d33' }}
+                    style={{
+                      '--focus-border': '#3d096d',
+                      '--focus-ring': '#3d096d33',
+                      minWidth: '44px',
+                      minHeight: '44px',
+                    }}
                     onFocus={(e) => {
                       e.currentTarget.style.borderColor = '#3d096d';
                       e.currentTarget.style.boxShadow = '0 0 0 2px #3d096d33';
@@ -208,10 +213,6 @@ const VerifyOTPPage = () => {
                     onBlur={(e) => {
                       e.currentTarget.style.borderColor = '#d1d5db';
                       e.currentTarget.style.boxShadow = '';
-                    }}
-                    style={{
-                      minWidth: '44px',
-                      minHeight: '44px',
                     }}
                   />
                 )}
